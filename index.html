@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Check-in - Fazenda Serrinha</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- PRIMEIRA TELA: Boas-vindas -->
+    <div id="welcomeScreen" class="screen active">
+        <div class="header-background"></div>
+
+        <div class="main-screen-card">
+            <div class="logo-container">
+                <img src="images/logo.png" alt="Logo Fazenda Serrinha" class="logo-image">
+            </div>
+            <div class="content-section">
+                <h1>Formulário de Check-in na Fazenda Serrinha</h1>
+                <p>Damos as boas-vindas à Fazenda Serrinha! Somos bastante informais no nosso modo de receber, porém o check-in é uma exigência legal que devemos cumprir. Assim, solicitamos que preencha este formulário antes da chegada, de forma a agilizar a acomodação na fazenda. Desejamos uma ótima estadia!</p>
+                
+                <button class="button-advance" onclick="showFormScreen()">
+                    Avançar <span class="arrow">&rarr;</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SEGUNDA TELA: Formulário -->
+    <div id="formScreen" class="screen">
+        <div class="header-background"></div>
+        
+        <main class="container">
+            <!-- Logo agora usa apenas a classe logo-container (sem form-page-logo) -->
+            <div class="logo-container">
+                <img src="images/logo.png" alt="Logo da Fazenda" class="logo-image">
+            </div>
+
+            <button class="back-link" onclick="showWelcomeScreen()">&larr; Voltar</button>
+
+            <form id="estadiaForm">
+                <section class="form-section">
+                    <h2>INFORMAÇÕES PESSOAIS</h2>
+
+                    <div class="form-group">
+                        <label for="nomeCompleto">Nome completo *</label>
+                        <input type="text" id="nomeCompleto" name="nomeCompleto" placeholder="Digite seu nome completo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cpf">CPF *</label>
+                        <input type="text" id="cpf" name="cpf" placeholder="Digite seu CPF sem pontos e traço" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" placeholder="Digite seu email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="celular">Celular *</label>
+                        <input type="tel" id="celular" name="celular" placeholder="Digite seu celular" required>
+                    </div>
+                </section>
+
+                <section class="form-section">
+                    <h2>SOBRE A ESTADIA</h2>
+
+                    <div class="form-group">
+                        <label for="projeto">Grupo/Evento *</label>
+                        <select id="projeto" name="projeto" required>
+                            <option value="" disabled selected>Carregando projetos...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nomeEvento">Descrição *</label>
+                        <input type="text" id="nomeEvento" name="nomeEvento" placeholder="Digite o nome do evento" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dataChegada">Data de Chegada *</label>
+                        <input type="date" id="dataChegada" name="dataChegada" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dataSaida">Data de Saída *</label>
+                        <input type="date" id="dataSaida" name="dataSaida" required>
+                    </div>
+
+                    <h2>SOBRE O PAGAMENTO</h2>
+
+                    <div class="form-group">
+                        <label for="valor">Valor da Reserva *</label>
+                        <input type="text" id="valor" name="valor" placeholder="Ex: 150,00" required>
+                    </div>
+                    <!-- Campo Forma de Pagamento Atualizado -->
+                    <div class="form-group">
+                        <label for="formaPagamento">Forma de Pagamento *</label>
+                        <select id="formaPagamento" name="formaPagamento" required>
+                            <option value="">Selecione a forma de pagamento</option>
+                            <optgroup label="📱 PIX" id="optgroup-pix">
+                                <!-- Opções serão geradas dinamicamente -->
+                            </optgroup>                            
+                            <optgroup label="💳 Cartão de Crédito" id="optgroup-cartao">
+                                <!-- Opções serão geradas dinamicamente -->
+                            </optgroup>
+                        </select>
+                        <small class="campo-info">A confirmação da reserva só é efetivada após o pagamento.</small>
+                    </div>
+                    <!-- Campo Valor Calculado -->
+                    <div class="form-group">
+                        <label for="valorCalculado">Valor Total a Pagar</label>
+                        <input type="text" id="valorCalculado" name="valorCalculado" readonly 
+                               placeholder="Selecione uma forma de pagamento">
+                        <small class="campo-info">Valor total a pagar incluindo descontos/taxas</small>
+                    </div>
+
+                    <!-- NOVO: Container para política de cancelamento -->
+                    <div id="politicaCancelamento" class="politica-cancelamento" style="display: none;">
+                        <div class="politica-header">
+                            <h4 id="politicaTitulo">Política de Cancelamento</h4>
+                        </div>
+                        <div id="politicaTexto" class="politica-texto">
+                            <!-- O texto da política será inserido aqui dinamicamente -->
+                        </div>
+                    </div>
+
+                    <h2>SOBRE OS TERMOS</h2>
+
+                    <p class="legal-text">Nossa forma de funcionamento, os serviços oferecidos e os acordos de convivência estão organizados no <a href="#" ><strong>Regulamento Interno</strong></a>. Clique <a href="https://drive.google.com/file/d/1IuRoFRJbBzBihsu1XjIf_js9qVExIqLB/view" >aqui</a> para ler o documento e valide-o abaixo.</p>
+
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="aceitoRegulamento" name="aceitoRegulamento" required>
+                        <label for="aceitoRegulamento">Estou ciente e de acordo com o Regulamento Interno e a Política de confirmação e cancelamento de reservas *</label>
+                    </div>
+                </section>
+                <section class="form-section">
+                    <h2 class="hidden">LGPD Compliance</h2>
+                    <p class="legal-text lgpd-text">Em observância à <strong>Lei Geral de Proteção de Dados Pessoais</strong>, ao escolher as opções abaixo, o hóspede autoriza a inclusão de seus dados pessoais na base de dados da Fazenda Serrinha, que usará ou não, essas informações para eventuais comunicações sobre a programação e os projetos que acontecem na Serrinha. A fazenda assume o compromisso de tratar esses dados de forma sigilosa e confidencial, não os utilizando para qualquer fim que não o descrito acima.</p>
+
+                    <div class="form-group radio-group">
+                        <input type="radio" id="receberComunicacoes" name="comunicacoesFazenda" value="sim" required>
+                        <label for="receberComunicacoes">Gostaria de receber comunicações da fazenda *</label>
+                    </div>
+                    <div class="form-group radio-group">
+                        <input type="radio" id="naoReceberComunicacoes" name="comunicacoesFazenda" value="nao">
+                        <label for="naoReceberComunicacoes">Não desejo receber comunicações da fazenda</label>
+                    </div>
+                </section>
+
+                <button type="submit" class="submit-button">Enviar &rarr;</button>
+            </form>
+        </main>
+    </div>
+
+    <!-- TERCEIRA TELA: Tela de Pagamento -->
+    <div id="paymentScreen" class="screen">
+        <div class="header-background"></div>
+
+        <div class="main-screen-card">
+            <div class="logo-container">
+                <img src="images/logo.png" alt="Logo Fazenda Serrinha" class="logo-image">
+            </div>
+            <div class="content-section">
+                <h1>Reserva Confirmada!</h1>
+                <p>Parabéns! Sua reserva foi processada com sucesso. Agora você precisa efetuar o pagamento para garantir sua hospedagem na Fazenda Serrinha.</p>
+                
+                <div class="payment-info">
+                    <p><strong>Próximo passo:</strong> Clique no botão abaixo para acessar a página de pagamento e finalizar sua reserva.</p>
+                </div>
+                
+                <div class="button-group">
+                    <a id="paymentButton" href="#"  class="button-advance payment-button">
+                        Pagar Agora <span class="arrow">💳</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
