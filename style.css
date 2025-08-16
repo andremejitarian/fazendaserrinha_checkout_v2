@@ -1,0 +1,719 @@
+/* Reset Básico e Fontes */
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: #f0f2f5;
+    line-height: 1.6;
+    color: #333;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* Sistema de Telas */
+.screen {
+    display: none;
+    min-height: 100vh;
+}
+
+.screen.active {
+    display: block;
+}
+
+/* ===== FUNDO COM IMAGEM (PARA AMBAS AS TELAS) ===== */
+.header-background {
+    height: 300px; /* Aumentado para mostrar mais da imagem de fundo */
+    background-image: url('images/background.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+/* ===== PRIMEIRA TELA: BOAS-VINDAS ===== */
+
+/* Card Principal (Área Branca com Conteúdo) */
+.main-screen-card {
+    background-color: white;
+    max-width: 800px;
+    margin: -50px auto 40px auto; /* Ajustado para descer o card e mostrar mais fundo */
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+    padding-top: 60px; /* Mantido para dar espaço ao logo que se sobrepõe */
+    padding-bottom: 40px;
+}
+
+/* Container do Logo (Círculo Branco) - USADO PARA AMBAS AS PÁGINAS */
+.logo-container {
+    position: absolute;
+    top: 0;
+    left: 40px; /* Posição à esquerda para AMBAS as páginas */
+    transform: translateY(-50%); /* Levanta o logo para metade de sua altura */
+    width: 120px;
+    height: 120px;
+    background-color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    z-index: 2;
+}
+.logo-image {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    border-radius: 50%;
+}
+
+/* Seção de Conteúdo (Título, Parágrafo, Botão) */
+.content-section {
+    padding: 0 40px;
+    padding-top: 20px;
+}
+
+h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #222;
+    margin-top: 0;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.content-section p {
+    font-size: 1.15rem;
+    color: #555;
+    margin-bottom: 30px;
+}
+
+/* Botão "Avançar" */
+.button-advance {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background-color: black;
+    color: white;
+    padding: 15px 30px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+    border: none;
+}
+
+.button-advance:hover {
+    background-color: #333;
+}
+
+.arrow {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+/* ===== SEGUNDA TELA: FORMULÁRIO ===== */
+
+/* Container Principal do Formulário */
+.container {
+    max-width: 700px;
+    margin: -50px auto 40px auto; /* Ajustado para descer o card e mostrar mais fundo */
+    background-color: #fff;
+    /* padding-top ajustado para dar espaço ao logo que se sobrepõe */
+    padding: 90px 30px 30px 30px; 
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    position: relative; /* Essencial para posicionar o logo absolutamente dentro dele */
+    z-index: 2;
+}
+
+/* Link Voltar */
+.back-link {
+    display: inline-block;
+    color: #555;
+    text-decoration: none;
+    margin-bottom: 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    padding-left: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.back-link:hover {
+    color: #000;
+}
+
+/* Títulos de Seção */
+h2 {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    font-weight: 700;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+h2.hidden {
+    display: none;
+}
+
+/* Grupos de Formulário */
+.form-group {
+    margin-bottom: 20px;
+}
+
+/* Labels */
+label {
+    display: block;
+    font-size: 0.95rem;
+    color: #555;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+/* Inputs de Texto, Email, Telefone, Data */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    color: #333;
+    outline: none;
+    transition: border-color 0.3s ease;
+    background-color: #fff;
+}
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+input[type="date"]:focus,
+select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Placeholders */
+input::placeholder {
+    color: #aaa;
+}
+
+/* ===== NOVOS ESTILOS PARA FORMA DE PAGAMENTO ===== */
+
+/* Select (Dropdown) */
+select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+/* Optgroups */
+optgroup {
+    font-weight: bold;
+    color: #495057;
+    background-color: #f8f9fa;
+    font-size: 0.95rem;
+    padding: 8px 0;
+}
+optgroup option {
+    font-weight: normal;
+    padding-left: 15px;
+    color: #333;
+    background-color: #fff;
+}
+
+/* Campo Valor Calculado */
+#valorCalculado {
+    background-color: #f8f9fa !important;
+    border: 2px solid #28a745 !important;
+    color: #155724 !important;
+    font-weight: bold !important;
+    font-size: 1.1em !important;
+    text-align: center !important;
+}
+
+#valorCalculado:focus {
+    background-color: #f8f9fa !important;
+    border-color: #28a745 !important;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
+}
+
+/* Campos readonly */
+input[readonly] {
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+/* Informação dos campos */
+.campo-info {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.85em;
+    color: #6c757d;
+    font-style: italic;
+    line-height: 1.4;
+}
+
+/* ===== ESTILOS PARA POLÍTICA DE CANCELAMENTO ===== */
+
+/* Container principal da política - seguindo o padrão dos form-groups */
+.politica-cancelamento {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 20px;
+    margin: 20px 0;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+/* Header da política - seguindo o padrão dos h2 */
+.politica-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+}
+
+.politica-icone {
+    font-size: 1.2rem;
+    margin-right: 10px;
+    color: #555;
+}
+
+.politica-header h4 {
+    margin: 0;
+    color: #333;
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+/* Texto da política - seguindo o padrão dos campos de informação */
+.politica-texto {
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #eee;
+    margin: 0;
+}
+
+.politica-texto strong {
+    color: #333;
+    font-weight: 600;
+}
+
+.politica-texto em {
+    font-style: italic;
+    color: #666;
+}
+
+/* Animação de entrada - sutil como o resto do design */
+.politica-cancelamento.show {
+    animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== ESTILOS PARA PREENCHIMENTO VIA URL ===== */
+
+/* Destaque para campos preenchidos automaticamente */
+.preenchido-automaticamente {
+    background-color: #e8f5e8 !important;
+    border-left: 4px solid #4CAF50 !important;
+    transition: all 0.3s ease;
+}
+.preenchido-automaticamente:focus {
+    background-color: #ffffff !important;
+    border-left: 4px solid #2196F3 !important;
+}
+
+/* Texto Legal (LGPD, Regulamento) */
+.legal-text {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 25px;
+    margin-bottom: 20px;
+    line-height: 1.8;
+}
+
+.legal-text strong {
+    color: #333;
+}
+
+.legal-text a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.legal-text a:hover {
+    text-decoration: underline;
+}
+
+/* Checkboxes e Radios */
+.checkbox-group, .radio-group {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.checkbox-group input[type="checkbox"],
+.radio-group input[type="radio"] {
+    width: auto;
+    margin-right: 10px;
+    flex-shrink: 0;
+    transform: scale(1.2);
+    margin-top: 3px;
+}
+
+.checkbox-group label,
+.radio-group label {
+    margin-bottom: 0;
+    font-weight: normal;
+    cursor: pointer;
+    color: #333;
+    font-size: 0.95rem;
+}
+/* Botão de Envio */
+.submit-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background-color: #1a1a1a;
+    color: #fff;
+    padding: 15px 25px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: fit-content;
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.submit-button:hover {
+    background-color: #333;
+    transform: translateY(-2px);
+}
+
+/* ===== RESPONSIVIDADE ===== */
+
+@media (max-width: 768px) {
+    .header-background {
+        height: 230px; /* Ajustado para telas menores */
+    }
+
+    .main-screen-card {
+        margin: -50px 20px 30px 20px; /* Mantém o ajuste de margem */
+        padding-top: 50px;
+    }
+
+    .logo-container {
+        width: 100px;
+        height: 100px;
+        left: 20px; /* Ajustado para telas menores, mas mantém à esquerda */
+    }
+    .logo-container .logo-image {
+        width: 60px;
+        height: 60px;
+    }
+
+    .content-section {
+        padding: 0 20px;
+        padding-top: 20px;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    .content-section p {
+        font-size: 1rem;
+    }
+
+    .button-advance {
+        padding: 12px 25px;
+        font-size: 1rem;
+    }
+    .container {
+        margin-top: -50px; /* Mantém o ajuste de margem */
+        padding-top: 70px; /* Ajuste de padding para o logo em telas menores */
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    
+    h2 {
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+    }
+    
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
+    select {
+        padding: 10px 12px;
+        font-size: 0.95rem;
+    }
+    
+    /* Ajuste do select em mobile */
+    select {
+        background-size: 14px;
+        background-position: right 10px center;
+        padding-right: 35px;
+    }
+    
+    .legal-text {
+        font-size: 0.85rem;
+        margin-top: 20px;
+        margin-bottom: 15px;
+    }
+    
+    .checkbox-group label,
+    .radio-group label {
+        font-size: 0.9rem;
+    }
+    
+    .submit-button {
+        padding: 12px 20px;
+        font-size: 1rem;
+    }
+    
+    /* Ajustes para campos de pagamento em mobile */
+    .campo-info {
+        font-size: 0.8em;
+    }
+    
+    #valorCalculado {
+        font-size: 1.05em !important;
+    }
+    
+    /* Ajustes da política para mobile */
+    .politica-cancelamento {
+        padding: 15px;
+        margin: 15px 0;
+    }
+    
+    .politica-header h4 {
+        font-size: 0.9rem;
+    }
+    
+    .politica-texto {
+        font-size: 0.9rem;
+        padding: 12px;
+    }
+    
+    .politica-icone {
+        font-size: 1.1rem;
+    }
+}
+@media (max-width: 480px) {
+    .header-background {
+        height: 200px; /* Ajustado para telas muito pequenas */
+    }
+
+    .main-screen-card {
+        margin: -40px 15px 25px 15px; /* Mantém o ajuste de margem */
+        padding-top: 45px;
+    }
+
+    .logo-container {
+        width: 90px;
+        height: 90px;
+        left: 15px; /* Ajustado para telas muito pequenas, mas mantém à esquerda */
+    }
+
+    .logo-container .logo-image {
+        width: 50px;
+        height: 50px;
+    }
+
+    h1 {
+        font-size: 1.6rem;
+    }
+
+    .content-section p {
+        font-size: 0.95rem;
+    }
+    .container {
+        margin-top: -40px; /* Mantém o ajuste de margem */
+        padding-top: 60px; /* Ajuste de padding para o logo em telas muito pequenas */
+        padding-left: 15px;
+        padding-right: 15px;
+        border-radius: 0;
+        box-shadow: none;
+    }
+    
+    .back-link {
+        margin-bottom: 20px;
+        font-size: 0.9rem;
+    }
+    
+    /* Ajustes específicos para telas muito pequenas */
+    optgroup {
+        font-size: 0.9rem;
+    }
+    
+    .campo-info {
+        font-size: 0.75em;
+    }
+    
+    #valorCalculado {
+        font-size: 1em !important;
+    }
+    
+    /* Ajustes da política para telas muito pequenas */
+    .politica-cancelamento {
+        padding: 12px;
+        margin: 12px 0;
+    }
+    
+    .politica-header {
+        margin-bottom: 12px;
+        padding-bottom: 6px;
+    }
+    
+    .politica-header h4 {
+        font-size: 0.85rem;
+    }
+    
+    .politica-texto {
+        font-size: 0.85rem;
+        padding: 10px;
+        line-height: 1.5;
+    }
+    
+    .politica-icone {
+        font-size: 1rem;
+        margin-right: 8px;
+    }
+}
+/* ===== ESTILOS PARA AS MELHORIAS ===== */
+
+/* Loading Spinner */
+.loading-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ffffff40;
+    border-radius: 50%;
+    border-top-color: #ffffff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Mensagens de Feedback */
+.mensagem-feedback {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    max-width: 400px;
+    padding: 16px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    animation: slideIn 0.3s ease-out;
+}
+
+.mensagem-feedback.sucesso {
+    background-color: #d4edda;
+    color: #155724;
+    border-left: 4px solid #28a745;
+}
+
+.mensagem-feedback.erro {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-left: 4px solid #dc3545;
+}
+.mensagem-feedback.info { /* NEW: Style for info messages */
+    background-color: #cfe2ff;
+    color: #055160;
+    border-left: 4px solid #0dcaf0;
+}
+.mensagem-conteudo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mensagem-icone {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.mensagem-texto {
+    line-height: 1.4;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Responsividade para mensagens */
+@media (max-width: 480px) {
+    .mensagem-feedback {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+        font-size: 0.9rem;
+    }
+}
+
+/* Melhorias visuais para campos com erro */
+.campo-erro {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+
+/* Estilo para campos válidos */
+.campo-valido {
+    border-color: #28a745 !important;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
+}
