@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ===== CARREGAMENTO DE DADOS =====
     async function carregarPoliticas() {
         try {
-            const response = await fetch('https://raw.githubusercontent.com/andremejitarian/fazendaserrinha-checkout/main/politica_cancelamento.json');
+            const response = await fetch('https://raw.githubusercontent.com/andremejitarian/fazendaserrinha_checkout_v2/main/politica_cancelamento.json');
             dadosPoliticas = await response.json();
             console.log('Políticas carregadas:', dadosPoliticas);
         } catch (error) {
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function carregarProjetos() {
         try {
-            const response = await fetch('https://raw.githubusercontent.com/andremejitarian/fazendaserrinha-checkout/main/projeto.json');
+            const response = await fetch('https://raw.githubusercontent.com/andremejitarian/fazendaserrinha_checkout_v2/main/projeto.json');
             dadosProjetos = await response.json();
             console.log('Dados de projetos carregados:', dadosProjetos);
             preencherProjetos();
