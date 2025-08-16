@@ -505,122 +505,150 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // ===== NOVA FUNÇÃO: PREENCHER CAMPOS VIA API =====
-    async function preencherCamposViaAPI(data) {
-        if (!data || Object.keys(data).length === 0) {
-            console.log('ℹ️ Nenhum dado para preencher via API.');
-            return;
-        }
+    // ===== NOVA FUNÇÃO: PREENCHER CAMPOS VIA API (CORRIGIDA) =====
+async function preencherCamposViaAPI(responseData) {
+    if (!responseData || Object.keys(responseData).length === 0) {
+        console.log('ℹ️ Nenhum dado para preencher via API.');
+        return;
+    }
 
-        console.log('🚀 Preenchendo campos automaticamente com dados da API...', data);
+    console.log('🚀 Dados recebidos da API:', responseData);
 
-        // Mapeamento de chaves da API para IDs dos campos do formulário.
-        // Adicione aqui todos os campos que você espera receber da API.
-        const mapeamentoCampos = {
-            'nomeCompleto': 'nomeCompleto',
-            'cpf': 'cpf',
-            'email': 'email',
-            'celular': 'celular',
-            'nomeEvento': 'nomeEvento',
-            'projeto': 'projeto',
-            'valor': 'valor',
-            'formaPagamento': 'formaPagamento',
-            'dataChegada': 'dataChegada',
-            'dataSaida': 'dataSaida'
-            // Exemplo: 'outroCampoAPI': 'idDoOutroCampoNoFormulario'
-        };
+    // Extrai os dados da estrutura do n8n
+    let data = responseData;
+    if (responseData.data && typeof responseData.data === 'object') {
+        data = responseData.data;
+        console.log('📦 Dados extraídos:', data);
+    }
 
-        for (const [api_key, form_id] of Object.entries(mapeamentoCampos)) {
-            if (data.hasOwnProperty(api_key)) {
-                const elemento = document.getElementById(form_id);
-                const valorOriginal = data[api_key]; // Valor original vindo da API
-                const valorDecodificado = String(valorOriginal); // Garante que é string
+    // Verifica se a resposta indica erro
+    if (responseData.ok === false) {
+        console.warn('⚠️ API retornou erro:', responseData.error || responseData.message);
+        mostrarMensagem(`⚠️ ${responseData.message || 'Erro ao carregar dados de reserva'}`, 'erro');
+        return;
+    }
 
-                if (elemento) {
-                    switch (form_id) {
-                        case 'cpf':
-                            const cpfLimpo = valorDecodificado.replace(/\D/g, '');
-                            elemento.value = cpfLimpo;
-                            elemento.dispatchEvent(new Event('input'));
-                            bloquearCampo(elemento, 'CPF definido via API - não pode ser alterado');
-                            break;
+    console.log('🚀 Preenchendo campos automaticamente com dados da API...', data);
 
-                        case 'celular':
-                            const celularLimpo = valorDecodificado.replace(/\D/g, '');
-                            elemento.value = celularLimpo;
-                            elemento.dispatchEvent(new Event('input'));
-                            bloquearCampo(elemento, 'Celular definido via API - não pode ser alterado');
-                            break;
+    // Mapeamento atualizado baseado na sua estrutura atual
+    const mapeamentoCampos = {
+        'nomeEvento': 'nomeEvento',
+        'valor': 'valor',
+        'token': 'token', // Se precisar usar o token em algum campo
+        // Adicione outros campos conforme necessário
+        'nomeCompleto': 'nomeCompleto',
+        'cpf': 'cpf',
+        'email': 'email',
+        'celular': 'celular',
+        'projeto': 'projeto',
+        'formaPagamento': 'formaPagamento',
+        'dataChegada': 'dataChegada',
+        'dataSaida': 'dataSaida'
+    };
 
-                        case 'valor':
-                            if (valorDecodificado.includes('R$')) {
-                                elemento.value = valorDecodificado;
-                            } else {
-                                let valorNumerico = parseFloat(valorDecodificado.replace(',', '.')) || 0;
-                                const valorFormatado = valorNumerico.toFixed(2)
-                                    .replace('.', ',')
-                                    .replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-                                const valorFinal = 'R$ ' + valorFormatado;
-                                elemento.value = valorFinal;
-                            }
-                            // Oculta o campo de valor se preenchido pela API
-                            bloquearCampo(elemento, 'Valor definido via API - campo oculto', true);
-                            break;
+    for (const [api_key, form_id] of Object.entries(mapeamentoCampos)) {
+        if (data.hasOwnProperty(api_key) && data[api_key] !== null && data[api_key] !== undefined) {
+            const elemento = document.getElementById(form_id);
+            const valorOriginal = data[api_key];
+            const valorDecodificado = String(valorOriginal);
 
-                        case 'nomeEvento':
-                        case 'dataChegada':
-                        case 'dataSaida':
-                            const dataFormatada = formatarDataParaInput(valorDecodificado);
-                            if (dataFormatada) {
-                                elemento.value = dataFormatada;
-                                bloquearCampo(elemento, `${elemento.labels[0].textContent.replace('*', '').trim()} definido via API - não pode ser alterado`);
-                            }
-                            break;
+            if (elemento) {
+                console.log(`🔄 Preenchendo campo '${form_id}' com valor '${valorDecodificado}'`);
+                
+                switch (form_id) {
+                    case 'cpf':
+                        const cpfLimpo = valorDecodificado.replace(/\D/g, '');
+                        elemento.value = cpfLimpo;
+                        elemento.dispatchEvent(new Event('input'));
+                        bloquearCampo(elemento, 'CPF definido via API - não pode ser alterado');
+                        break;
 
-                        case 'projeto':
-                            // Certifica-se de que os dados de projetos já foram carregados
+                    case 'celular':
+                        const celularLimpo = valorDecodificado.replace(/\D/g, '');
+                        elemento.value = celularLimpo;
+                        elemento.dispatchEvent(new Event('input'));
+                        bloquearCampo(elemento, 'Celular definido via API - não pode ser alterado');
+                        break;
+
+                    case 'valor':
+                        if (valorDecodificado.includes('R$')) {
+                            elemento.value = valorDecodificado;
+                        } else {
+                            let valorNumerico = parseFloat(valorDecodificado.replace(',', '.')) || 0;
+                            const valorFormatado = valorNumerico.toFixed(2)
+                                .replace('.', ',')
+                                .replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                            const valorFinal = 'R$ ' + valorFormatado;
+                            elemento.value = valorFinal;
+                        }
+                        elemento.dispatchEvent(new Event('input'));
+                        // Oculta o campo de valor se preenchido pela API
+                        bloquearCampo(elemento, 'Valor definido via API - campo oculto', true);
+                        break;
+
+                    case 'nomeEvento':
+                        elemento.value = valorDecodificado;
+                        bloquearCampo(elemento, 'Nome do evento definido via API - não pode ser alterado');
+                        break;
+
+                    case 'dataChegada':
+                    case 'dataSaida':
+                        const dataFormatada = formatarDataParaInput(valorDecodificado);
+                        if (dataFormatada) {
+                            elemento.value = dataFormatada;
+                            bloquearCampo(elemento, `${elemento.labels[0]?.textContent?.replace('*', '').trim() || 'Data'} definido via API - não pode ser alterado`);
+                        }
+                        break;
+
+                    case 'projeto':
+                        // Aguarda os projetos serem carregados antes de definir
+                        setTimeout(() => {
                             if (dadosProjetos.projetos && dadosProjetos.projetos[valorDecodificado]) {
                                 elemento.value = valorDecodificado;
                                 bloquearCampo(elemento, 'Projeto definido via API - não pode ser alterado');
-                                elemento.dispatchEvent(new Event('change')); // Dispara o evento para atualizar formas de pagamento
+                                elemento.dispatchEvent(new Event('change'));
                             } else {
-                                console.warn(`⚠️ Projeto inválido '${valorDecodificado}' recebido da API. Verifique o JSON de projetos.`);
+                                console.warn(`⚠️ Projeto inválido '${valorDecodificado}' recebido da API.`);
                             }
-                            break;
+                        }, 500);
+                        break;
 
-                        case 'formaPagamento':
+                    case 'formaPagamento':
+                        // Aguarda as opções serem geradas antes de definir
+                        setTimeout(() => {
                             if (valorDecodificado) {
-                                // Assume que o valor da API é 'cartao_1', 'pix_antecipado', etc.
-                                // A validação mais profunda ocorrerá ao gerar as opções do dropdown e ao calcular o valor.
                                 elemento.value = valorDecodificado;
                                 bloquearCampo(elemento, 'Forma de pagamento definida via API - não pode ser alterada');
+                                elemento.dispatchEvent(new Event('change'));
                             }
-                            break;
+                        }, 1000);
+                        break;
 
-                        default:
-                            elemento.value = valorDecodificado;
-                            // Bloqueia outros campos que são pré-preenchidos pela API
-                            if (elemento.labels && elemento.labels.length > 0) {
-                                bloquearCampo(elemento, `${elemento.labels[0].textContent.replace('*', '').trim()} definido via API - não pode ser alterado`);
-                            } else {
-                                bloquearCampo(elemento, 'Campo preenchido via API - não pode ser alterado');
-                            }
-                            break;
-                    }
-                    elemento.classList.add('preenchido-automaticamente');
-                    console.log(`✅ Campo '${form_id}' preenchido com: '${valorDecodificado}'`);
-                } else {
-                    console.warn(`⚠️ Campo '${form_id}' não encontrado no formulário para preencher com dados da API.`);
+                    default:
+                        elemento.value = valorDecodificado;
+                        if (elemento.labels && elemento.labels.length > 0) {
+                            bloquearCampo(elemento, `${elemento.labels[0].textContent.replace('*', '').trim()} definido via API - não pode ser alterado`);
+                        } else {
+                            bloquearCampo(elemento, 'Campo preenchido via API - não pode ser alterado');
+                        }
+                        break;
                 }
+                
+                elemento.classList.add('preenchido-automaticamente');
+                console.log(`✅ Campo '${form_id}' preenchido com sucesso`);
+            } else {
+                console.warn(`⚠️ Campo '${form_id}' não encontrado no formulário.`);
             }
         }
-
-        // Delay para garantir que todos os campos sejam populados e os eventos disparados
-        setTimeout(() => {
-            gerarOpcoesDropdown();
-            atualizarValorCalculado();
-        }, 100);
     }
+
+    // Delay maior para garantir que todos os campos sejam populados
+    setTimeout(() => {
+        console.log('🔄 Atualizando opções de pagamento e cálculos...');
+        gerarOpcoesDropdown();
+        atualizarValorCalculado();
+    }, 1500);
+}
 
     // Função auxiliar para formatar datas (já existente e reutilizada)
     function formatarDataParaInput(dataString) {
