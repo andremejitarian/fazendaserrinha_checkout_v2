@@ -1,0 +1,25 @@
+{
+  "projetos": {
+    "fazenda_serrinha": {
+      "nome": "Fazenda_Serrinha",
+      "formas_pagamento_permitidas": ["cartao", "pix", "pix_antecipado", "pix_sinal"],
+      "descricao": "Projeto principal da fazenda com todas as opções de pagamento"
+    },
+    "festival": {
+      "nome": "Festival Arte Serrinha – Primavera 2025",
+      "formas_pagamento_permitidas": ["cartao", "pix", "pix_antecipado", "pix_sinal"],
+      "descricao": "Festival de Arte Serrinha, aceita todas as formas de pagamento"
+    },
+    "evento_corporativo": {
+      "nome": "Evento Corporativo",
+      "formas_pagamento_permitidas": ["cartao", "pix","pix_sinal"],
+      "descricao": "Eventos empresariais com pagamento tradicional"
+    },
+    "acampamento_jovens": {
+      "nome": "Acampamento de Jovens",
+      "formas_pagamento_permitidas": ["pix", "pix_antecipado"],
+      "descricao": "Acampamento com desconto antecipado"
+    }
+  },
+  "ultima_atualizacao": "2025-01-08T18:30:00Z"
+}
