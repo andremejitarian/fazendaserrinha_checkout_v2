@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const form = document.getElementById('estadiaForm');
 
     // URLs das webhooks
-    const WEBHOOK_SUBMISSION_URL = 'https://criadordigital-n8n-webhook.kttqgl.easypanel.host/webhook/7a993f54-3b5d-4151-911e-f2e8c6d89e57';
+    const WEBHOOK_SUBMISSION_URL = 'https://criadordigital-n8n-webhook.kttqgl.easypanel.host/webhook/3d165896-2fb5-47db-a0e9-66c763fd9cec';
     // NOVO: Endpoint para buscar dados de preenchimento
     const WEBHOOK_DATA_FETCH_URL = 'https://criadordigital-n8n-webhook.kttqgl.easypanel.host/webhook/d4d41fd8-84ed-4179-a4df-6a65cec1f878'; 
 
