@@ -1,0 +1,35 @@
+{
+  "politicas": {
+    "1": {
+      "titulo": "Política de confirmação e cancelamento de reservas",
+      "texto": "**Confirmação da Reserva:**\n - Para essa condição o pagamento deve ser feito no PIX com mais de 30 dias de antecedência da data de chegada.\n- A reserva somente será confirmada após o recebimento do pagamento.\n- Enquanto o pagamento não for realizado, a hospedagem permanecerá disponível para outros interessados.\n **Cancelamento:**\n Por se tratar de tarifa promocional, não há restituição de valores pagos.",
+      "aplicavel_para": ["pix_antecipado"]
+    },
+    "2": {
+      "titulo": "Política de confirmação e cancelamento de reservas",
+      "texto": "**Confirmação da Reserva:**\n- O sinal corresponde a **30% do valor total da reserva**, e deve ser pago no momento da reserva.\n- Enquanto o pagamento do sinal não for realizado, a hospedagem permanecerá disponível para outros interessados.\n- O saldo de **70%** deverá ser pago até a data de saída.\n**Cancelamento:**\n Até 30 dias antes da data de chegada – reembolso de 100% do valor pago.\n Até 15 dias antes da data de chegada – reembolso de 50% do valor pago.\n Menos de 15 dias antes da data de chegada – sem reembolso.",
+      "aplicavel_para": ["pix_sinal"]
+    },
+    "3": {
+      "titulo": "Política de confirmação e cancelamento de reservas",
+      "texto": "**Confirmação da Reserva:**\n A reserva somente será confirmada após o recebimento do pagamento.\n Enquanto o pagamento não for realizado, a hospedagem permanecerá disponível para outros interessados.\n**Cancelamento:**\n Até 30 dias antes da data de chegada – reembolso de 100% do valor pago.\n Até 15 dias antes da data de chegada – reembolso de 50% do valor pago.\n Menos de 15 dias antes da data de chegada – sem reembolso.",
+      "aplicavel_para": ["pix_1"]
+    },
+    "4": {
+      "titulo": "Política de confirmação e cancelamento de reservas",
+      "texto": "**Confirmação da Reserva:**\n A reserva somente será confirmada após o recebimento do pagamento.\n Enquanto o pagamento não for realizado, a hospedagem permanecerá disponível para outros interessados.\n**Cancelamento:**\n Até 30 dias antes da data de chegada – reembolso de 100% do valor pago.\n Até 15 dias antes da data de chegada – reembolso de 50% do valor pago.\n Menos de 15 dias antes da data de chegada – sem reembolso.",
+      "aplicavel_para": ["cartao_1"]
+    },
+    "5": {
+      "titulo": "Política de confirmação e cancelamento de reservas",
+      "texto": "**Confirmação da Reserva:**\n A reserva somente será confirmada após o recebimento do pagamento.\n Enquanto o pagamento não for realizado, a hospedagem permanecerá disponível para outros interessados.\n**Cancelamento:**\n Até 30 dias antes da data de chegada – reembolso de 100% do valor pago.\n Até 15 dias antes da data de chegada – reembolso de 50% do valor pago.\n Menos de 15 dias antes da data de chegada – sem reembolso.",
+      "aplicavel_para": ["cartao_6"]
+    },
+    "6": {
+      "titulo": "Política de confirmação e cancelamento de reservas",
+      "texto": "A reserva somente será confirmada após o recebimento do pagamento.\n Enquanto o pagamento não for realizado, a hospedagem permanecerá disponível para outros interessados.\n**Cancelamento:**\n Até 30 dias antes da data de chegada – reembolso de 100% do valor pago.\n Até 15 dias antes da data de chegada – reembolso de 50% do valor pago.\n Menos de 15 dias antes da data de chegada – sem reembolso.",
+      "aplicavel_para": ["outras"]
+    }
+  },
+  "ultima_atualizacao": "2025-01-08T14:30:00Z"
+}
