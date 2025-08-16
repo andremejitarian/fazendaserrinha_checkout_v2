@@ -558,7 +558,7 @@ async function preencherCamposViaAPI(responseData) {
 
     // Mapeamento atualizado baseado na sua estrutura atual
     const mapeamentoCampos = {
-        'nomeEvento': 'nomeEvento',
+        'descricao': 'descricao',
         'valor': 'valor',
         'token': 'token',
         'nomeCompleto': 'nomeCompleto',
@@ -627,7 +627,7 @@ async function preencherCamposViaAPI(responseData) {
                         }
                         break;
 
-                    case 'nomeEvento':
+                    case 'descricao':
                         elemento.value = valorDecodificado;
                         bloquearCampo(elemento, 'Nome do evento definido via API - não pode ser alterado');
                         break;
@@ -973,7 +973,7 @@ const valorLiquido = extrairValorNumerico(document.getElementById('valor').value
             email: document.getElementById('email').value.trim().toLowerCase(),
             celular: document.getElementById('celular').value,
             celularLimpo: document.getElementById('celular').value.replace(/[^\d]/g, ''),
-            nomeEvento: document.getElementById('nomeEvento').value.trim(),
+            descricao: document.getElementById('descricao').value.trim(),
             projeto: document.getElementById('projeto').value,
             projetoNome: projetoCompleto,
             valor: document.getElementById('valor').value,
@@ -1027,7 +1027,7 @@ const valorLiquido = extrairValorNumerico(document.getElementById('valor').value
             mostrarMensagem('Por favor, insira um número de celular válido.', 'erro');
             return;
         }
-        if (formData.nomeEvento.length < 3) {
+        if (formData.descricao.length < 3) {
             restaurarBotao();
             mostrarMensagem('O nome do evento deve ter pelo menos 3 caracteres.', 'erro');
             return;
