@@ -858,12 +858,6 @@ async function preencherCamposViaAPI(responseData) {
     }
 
     // ===== FUNÇÕES AUXILIARES =====
-    function converterValorParaNumero(valorFormatado) {
-        if (!valorFormatado) return 0;
-        let valor = valorFormatado.replace(/R$\s?/g, '').replace(/\./g, '');
-        valor = valor.replace(',', '.');
-        return parseFloat(valor) || 0;
-    }
 
     function mostrarMensagem(texto, tipo = 'sucesso') {
         const mensagemExistente = document.querySelector('.mensagem-feedback');
