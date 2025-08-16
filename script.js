@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // URLs das webhooks
     const WEBHOOK_SUBMISSION_URL = 'https://criadordigital-n8n-webhook.kttqgl.easypanel.host/webhook/7a993f54-3b5d-4151-911e-f2e8c6d89e57';
     // NOVO: Endpoint para buscar dados de preenchimento
-    const WEBHOOK_DATA_FETCH_URL = 'https://criadordigital-n8n-webhook.kttqgl.easypanel.host/webhook/d4d41fd8-84ed-4179-a4df-6a65cec1f878';
+    const WEBHOOK_DATA_FETCH_URL = 'https://criadordigital-n8n-webhook.kttqgl.easypanel.host/webhook/d4d41fd8-84ed-4179-a4df-6a65cec1f878'; 
 
     // ===== VARIÁVEIS GLOBAIS =====
     let dadosPoliticas = {};
@@ -443,43 +443,41 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // ===== NOVA FUNÇÃO: OBTER TOKEN DA URL =====
-async function fetchDadosN8N(token) {
-    if (!token) {
-        console.log('ℹ️ Nenhum token na URL para buscar dados.');
-        return null;
+    function obterTokenURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('token');
     }
 
-    mostrarMensagem('⏳ Carregando dados de reserva...', 'info');
+    // ===== NOVA FUNÇÃO: BUSCAR DADOS VIA API =====
+    async function fetchDadosN8N(token) {
+        if (!token) {
+            console.log('ℹ️ Nenhum token na URL para buscar dados.');
+            return null;
+        }
 
-    try {
-        const response = await fetch(`${WEBHOOK_DATA_FETCH_URL}?token=${token}`);
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Erro ao buscar dados: ${response.status} - ${errorText}`);
+        mostrarMensagem('⏳ Carregando dados de reserva...', 'info');
+
+        try {
+            const response = await fetch(`${WEBHOOK_DATA_FETCH_URL}?token=${token}`);
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Erro ao buscar dados: ${response.status} - ${errorText}`);
+            }
+            const data = await response.json();
+            mostrarMensagem('✅ Dados de reserva carregados com sucesso!', 'sucesso');
+            return data;
+        } catch (error) {
+            console.error('❌ Erro no fetch de dados do n8n:', error);
+            mostrarMensagem(`❌ Erro ao carregar dados de reserva: ${error.message}.`, 'erro');
+            return null;
+        } finally {
+            // Remove a mensagem de carregamento após um breve atraso
+            setTimeout(() => {
+                const msg = document.querySelector('.mensagem-feedback.info');
+                if (msg) msg.remove();
+            }, 2000);
         }
-        let data = await response.json();
-        
-        // CORREÇÃO: Se a resposta for um array, pega o primeiro item
-        if (Array.isArray(data) && data.length > 0) {
-            data = data[0];
-            console.log('📦 Dados extraídos do array:', data);
-        }
-        
-        debugAPI(data, 'Resposta da API');
-        
-        mostrarMensagem('✅ Dados de reserva carregados com sucesso!', 'sucesso');
-        return data;
-    } catch (error) {
-        console.error('❌ Erro no fetch de dados do n8n:', error);
-        mostrarMensagem(`❌ Erro ao carregar dados de reserva: ${error.message}.`, 'erro');
-        return null;
-    } finally {
-        setTimeout(() => {
-            const msg = document.querySelector('.mensagem-feedback.info');
-            if (msg) msg.remove();
-        }, 2000);
     }
-}
 
     // ===== FUNÇÃO PARA BLOQUEAR CAMPOS =====
     function bloquearCampo(elemento, motivo = 'Campo preenchido automaticamente', ocultar = false) {
@@ -532,16 +530,12 @@ async function preencherCamposViaAPI(responseData) {
 
     console.log('🚀 Preenchendo campos automaticamente com dados da API...', data);
 
-    // Função auxiliar para verificar se o valor é válido
-    function isValidValue(value) {
-        return value !== null && value !== undefined && value !== '';
-    }
-
-    // Mapeamento atualizado
+    // Mapeamento atualizado baseado na sua estrutura atual
     const mapeamentoCampos = {
         'nomeEvento': 'nomeEvento',
         'valor': 'valor',
-        'token': 'token',
+        'token': 'token', // Se precisar usar o token em algum campo
+        // Adicione outros campos conforme necessário
         'nomeCompleto': 'nomeCompleto',
         'cpf': 'cpf',
         'email': 'email',
@@ -553,143 +547,98 @@ async function preencherCamposViaAPI(responseData) {
     };
 
     for (const [api_key, form_id] of Object.entries(mapeamentoCampos)) {
-        if (data.hasOwnProperty(api_key) && isValidValue(data[api_key])) {
+        if (data.hasOwnProperty(api_key) && data[api_key] !== null && data[api_key] !== undefined) {
             const elemento = document.getElementById(form_id);
             const valorOriginal = data[api_key];
             const valorDecodificado = String(valorOriginal);
 
             if (elemento) {
-                console.log(`🔄 Preenchendo campo '${form_id}' com valor '${valorOriginal}' (tipo: ${typeof valorOriginal})`);
+                console.log(`🔄 Preenchendo campo '${form_id}' com valor '${valorDecodificado}'`);
                 
                 switch (form_id) {
                     case 'cpf':
-                        if (valorDecodificado.trim()) {
-                            const cpfLimpo = valorDecodificado.replace(/\D/g, '');
-                            elemento.value = cpfLimpo;
-                            elemento.dispatchEvent(new Event('input'));
-                            bloquearCampo(elemento, 'CPF definido via API - não pode ser alterado');
-                        }
+                        const cpfLimpo = valorDecodificado.replace(/\D/g, '');
+                        elemento.value = cpfLimpo;
+                        elemento.dispatchEvent(new Event('input'));
+                        bloquearCampo(elemento, 'CPF definido via API - não pode ser alterado');
                         break;
 
                     case 'celular':
-                        if (valorDecodificado.trim()) {
-                            const celularLimpo = valorDecodificado.replace(/\D/g, '');
-                            elemento.value = celularLimpo;
-                            elemento.dispatchEvent(new Event('input'));
-                            bloquearCampo(elemento, 'Celular definido via API - não pode ser alterado');
-                        }
+                        const celularLimpo = valorDecodificado.replace(/\D/g, '');
+                        elemento.value = celularLimpo;
+                        elemento.dispatchEvent(new Event('input'));
+                        bloquearCampo(elemento, 'Celular definido via API - não pode ser alterado');
                         break;
 
                     case 'valor':
-                        console.log(`💰 Processando valor: ${valorOriginal} (tipo: ${typeof valorOriginal})`);
-                        
-                        let valorNumerico;
-                        if (typeof valorOriginal === 'number') {
-                            valorNumerico = valorOriginal;
-                        } else if (typeof valorOriginal === 'string') {
-                            if (valorOriginal.includes('R$')) {
-                                elemento.value = valorOriginal;
-                                break;
-                            } else {
-                                valorNumerico = parseFloat(valorOriginal.replace(',', '.')) || 0;
-                            }
-                        }
-                        
-                        if (valorNumerico && valorNumerico > 0) {
+                        if (valorDecodificado.includes('R$')) {
+                            elemento.value = valorDecodificado;
+                        } else {
+                            let valorNumerico = parseFloat(valorDecodificado.replace(',', '.')) || 0;
                             const valorFormatado = valorNumerico.toFixed(2)
                                 .replace('.', ',')
                                 .replace(/\B(?=(\d{3})+(?!\d))/g, '.');
                             const valorFinal = 'R$ ' + valorFormatado;
-                            
-                            console.log(`💰 Valor formatado: ${valorFinal}`);
                             elemento.value = valorFinal;
-                            elemento.dispatchEvent(new Event('input'));
-                            elemento.dispatchEvent(new Event('blur'));
-                            
-                            // Oculta o campo de valor se preenchido pela API
-                            bloquearCampo(elemento, 'Valor definido via API - campo oculto', true);
                         }
-                        break;
-
-                    case 'email':
-                        if (valorDecodificado.trim()) {
-                            elemento.value = valorDecodificado.trim().toLowerCase();
-                            bloquearCampo(elemento, 'Email definido via API - não pode ser alterado');
-                        }
+                        elemento.dispatchEvent(new Event('input'));
+                        // Oculta o campo de valor se preenchido pela API
+                        bloquearCampo(elemento, 'Valor definido via API - campo oculto', true);
                         break;
 
                     case 'nomeEvento':
-                        if (valorDecodificado.trim()) {
-                            elemento.value = valorDecodificado.trim();
-                            bloquearCampo(elemento, 'Nome do evento definido via API - não pode ser alterado');
-                        }
-                        break;
-
-                    case 'nomeCompleto':
-                        if (valorDecodificado.trim()) {
-                            elemento.value = valorDecodificado.trim();
-                            bloquearCampo(elemento, 'Nome completo definido via API - não pode ser alterado');
-                        }
+                        elemento.value = valorDecodificado;
+                        bloquearCampo(elemento, 'Nome do evento definido via API - não pode ser alterado');
                         break;
 
                     case 'dataChegada':
                     case 'dataSaida':
-                        if (valorDecodificado.trim()) {
-                            const dataFormatada = formatarDataParaInput(valorDecodificado);
-                            if (dataFormatada) {
-                                elemento.value = dataFormatada;
-                                bloquearCampo(elemento, `${elemento.labels[0]?.textContent?.replace('*', '').trim() || 'Data'} definido via API - não pode ser alterado`);
-                            }
+                        const dataFormatada = formatarDataParaInput(valorDecodificado);
+                        if (dataFormatada) {
+                            elemento.value = dataFormatada;
+                            bloquearCampo(elemento, `${elemento.labels[0]?.textContent?.replace('*', '').trim() || 'Data'} definido via API - não pode ser alterado`);
                         }
                         break;
 
                     case 'projeto':
-                        if (valorDecodificado.trim()) {
-                            // Aguarda os projetos serem carregados antes de definir
-                            setTimeout(() => {
-                                if (dadosProjetos.projetos && dadosProjetos.projetos[valorDecodificado]) {
-                                    elemento.value = valorDecodificado;
-                                    bloquearCampo(elemento, 'Projeto definido via API - não pode ser alterado');
-                                    elemento.dispatchEvent(new Event('change'));
-                                } else {
-                                    console.warn(`⚠️ Projeto inválido '${valorDecodificado}' recebido da API.`);
-                                }
-                            }, 500);
-                        }
+                        // Aguarda os projetos serem carregados antes de definir
+                        setTimeout(() => {
+                            if (dadosProjetos.projetos && dadosProjetos.projetos[valorDecodificado]) {
+                                elemento.value = valorDecodificado;
+                                bloquearCampo(elemento, 'Projeto definido via API - não pode ser alterado');
+                                elemento.dispatchEvent(new Event('change'));
+                            } else {
+                                console.warn(`⚠️ Projeto inválido '${valorDecodificado}' recebido da API.`);
+                            }
+                        }, 500);
                         break;
 
                     case 'formaPagamento':
-                        if (valorDecodificado.trim()) {
-                            // Aguarda as opções serem geradas antes de definir
-                            setTimeout(() => {
+                        // Aguarda as opções serem geradas antes de definir
+                        setTimeout(() => {
+                            if (valorDecodificado) {
                                 elemento.value = valorDecodificado;
                                 bloquearCampo(elemento, 'Forma de pagamento definida via API - não pode ser alterada');
                                 elemento.dispatchEvent(new Event('change'));
-                            }, 1000);
-                        }
+                            }
+                        }, 1000);
                         break;
 
                     default:
-                        if (valorDecodificado.trim()) {
-                            elemento.value = valorDecodificado.trim();
-                            if (elemento.labels && elemento.labels.length > 0) {
-                                bloquearCampo(elemento, `${elemento.labels[0].textContent.replace('*', '').trim()} definido via API - não pode ser alterado`);
-                            } else {
-                                bloquearCampo(elemento, 'Campo preenchido via API - não pode ser alterado');
-                            }
+                        elemento.value = valorDecodificado;
+                        if (elemento.labels && elemento.labels.length > 0) {
+                            bloquearCampo(elemento, `${elemento.labels[0].textContent.replace('*', '').trim()} definido via API - não pode ser alterado`);
+                        } else {
+                            bloquearCampo(elemento, 'Campo preenchido via API - não pode ser alterado');
                         }
                         break;
                 }
                 
-                if (isValidValue(data[api_key])) {
-                    elemento.classList.add('preenchido-automaticamente');
-                    console.log(`✅ Campo '${form_id}' preenchido com sucesso`);
-                }
+                elemento.classList.add('preenchido-automaticamente');
+                console.log(`✅ Campo '${form_id}' preenchido com sucesso`);
             } else {
                 console.warn(`⚠️ Campo '${form_id}' não encontrado no formulário.`);
             }
-        } else {
-            console.log(`ℹ️ Campo '${api_key}' não tem valor válido ou não existe:`, data[api_key]);
         }
     }
 
