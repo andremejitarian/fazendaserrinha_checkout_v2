@@ -270,113 +270,100 @@ document.addEventListener('DOMContentLoaded', async () => {
         gerarOpcoesDropdown();
     }
 
-function gerarOpcoesDropdown() {
-    const campoValor = document.getElementById('valor');
-    const campoProjeto = document.getElementById('projeto');
-    const valorLiquido = extrairValorNumerico(campoValor.value);
-    const projetoSelecionado = campoProjeto.value;
+    function gerarOpcoesDropdown() {
+        const campoValor = document.getElementById('valor');
+        const campoProjeto = document.getElementById('projeto');
+        const valorLiquido = extrairValorNumerico(campoValor.value);
+        const projetoSelecionado = campoProjeto.value;
 
-    console.log(`🔧 gerarOpcoesDropdown - Valor: ${valorLiquido}, Projeto: ${projetoSelecionado}`);
+        const optgroupCartao = document.getElementById('optgroup-cartao');
+        const optgroupPix = document.getElementById('optgroup-pix');
 
-    const optgroupCartao = document.getElementById('optgroup-cartao');
-    const optgroupPix = document.getElementById('optgroup-pix');
+        optgroupCartao.innerHTML = '';
+        optgroupPix.innerHTML = '';
 
-    optgroupCartao.innerHTML = '';
-    optgroupPix.innerHTML = '';
+        if (!projetoSelecionado) {
+            optgroupCartao.innerHTML = '<option value="" disabled>Selecione um projeto primeiro</option>';
+            optgroupPix.innerHTML = '<option value="" disabled>Selecione um projeto primeiro</option>';
+            return;
+        }
+        if (valorLiquido <= 0) {
+            optgroupCartao.innerHTML = '<option value="" disabled>Informe um valor primeiro</option>';
+            optgroupPix.innerHTML = '<option value="" disabled>Informe um valor primeiro</option>';
+            return;
+        }
 
-    if (!projetoSelecionado) {
-        console.log('⚠️ Nenhum projeto selecionado');
-        optgroupCartao.innerHTML = '<option value="" disabled>Selecione um projeto primeiro</option>';
-        optgroupPix.innerHTML = '<option value="" disabled>Selecione um projeto primeiro</option>';
-        return;
-    }
-    
-    if (valorLiquido <= 0) {
-        console.log('⚠️ Valor inválido ou zero');
-        optgroupCartao.innerHTML = '<option value="" disabled>Informe um valor primeiro</option>';
-        optgroupPix.innerHTML = '<option value="" disabled>Informe um valor primeiro</option>';
-        return;
-    }
+        const formasPermitidas = obterFormasPagamentoPermitidas(projetoSelecionado);
+        console.log(`🏗️ Formas de pagamento permitidas para ${projetoSelecionado}:`, formasPermitidas);
 
-    const formasPermitidas = obterFormasPagamentoPermitidas(projetoSelecionado);
-    console.log(`🏗️ Formas de pagamento permitidas para ${projetoSelecionado}:`, formasPermitidas);
-
-    // Resto da função permanece igual...
-    if (formasPermitidas.includes('cartao')) {
-        for (let parcelas = 1; parcelas <= 12; parcelas++) {
-            const calculo = calcularValorComTaxas(valorLiquido, 'cartao', parcelas);
-            if (calculo) {
-                const option = document.createElement('option');
-                option.value = `cartao_${parcelas}`;
-                const tipoPagamento = getPaymentTypeName('cartao');
-                if (parcelas === 1) {
-                    option.textContent = `À vista no ${tipoPagamento} - ${formatarParaMoeda(calculo.total)}`;
-                } else {
-                    option.textContent = `${parcelas}x no ${tipoPagamento} - ${formatarParaMoeda(calculo.porParcela)}/mês (Total: ${formatarParaMoeda(calculo.total)})`;
+        if (formasPermitidas.includes('cartao')) {
+            for (let parcelas = 1; parcelas <= 12; parcelas++) {
+                const calculo = calcularValorComTaxas(valorLiquido, 'cartao', parcelas);
+                if (calculo) {
+                    const option = document.createElement('option');
+                    option.value = `cartao_${parcelas}`;
+                    const tipoPagamento = getPaymentTypeName('cartao');
+                    if (parcelas === 1) {
+                        option.textContent = `À vista no ${tipoPagamento} - ${formatarParaMoeda(calculo.total)}`;
+                    } else {
+                        option.textContent = `${parcelas}x no ${tipoPagamento} - ${formatarParaMoeda(calculo.porParcela)}/mês (Total: ${formatarParaMoeda(calculo.total)})`;
+                    }
+                    optgroupCartao.appendChild(option);
                 }
-                optgroupCartao.appendChild(option);
-                console.log(`✅ Opção cartão adicionada: ${parcelas}x`);
             }
+        } else {
+            optgroupCartao.innerHTML = '<option value="" disabled>Não disponível para este projeto</option>';
         }
-    } else {
-        optgroupCartao.innerHTML = '<option value="" disabled>Não disponível para este projeto</option>';
-    }
 
-    let pixAdicionado = false;
+        let pixAdicionado = false;
 
-    if (formasPermitidas.includes('pix') && permitePagamentoPIXVista()) {
-        const calculo = calcularValorComTaxas(valorLiquido, 'pix', 1);
-        if (calculo) {
-            const option = document.createElement('option');
-            option.value = 'pix_1';
-            option.textContent = `À vista no PIX - ${formatarParaMoeda(calculo.total)}`;
-            optgroupPix.appendChild(option);
-            pixAdicionado = true;
-            console.log(`✅ Opção PIX à vista adicionada`);
-        }
-    }
-
-    if (formasPermitidas.includes('pix')) {
-        for (let parcelas = 2; parcelas <= 3; parcelas++) {
-            const calculo = calcularValorComTaxas(valorLiquido, 'pix', parcelas);
+        if (formasPermitidas.includes('pix') && permitePagamentoPIXVista()) {
+            const calculo = calcularValorComTaxas(valorLiquido, 'pix', 1);
             if (calculo) {
                 const option = document.createElement('option');
-                option.value = `pix_${parcelas}`;
-                option.textContent = `${parcelas}x no PIX - ${formatarParaMoeda(calculo.porParcela)}/mês (Total: ${formatarParaMoeda(calculo.total)})`;
+                option.value = 'pix_1';
+                option.textContent = `À vista no PIX - ${formatarParaMoeda(calculo.total)}`;
                 optgroupPix.appendChild(option);
                 pixAdicionado = true;
-                console.log(`✅ Opção PIX ${parcelas}x adicionada`);
             }
         }
-    }
 
-    if (formasPermitidas.includes('pix_antecipado') && permitePagamentoAntecipado()) {
-        const valorComDesconto = valorLiquido * 0.87;
-        const option1 = document.createElement('option');
-        option1.value = 'pix_antecipado';
-        option1.textContent = `PIX Antecipado - ${formatarParaMoeda(valorComDesconto)}`;
-        optgroupPix.appendChild(option1);
-        pixAdicionado = true;
-        console.log(`✅ Opção PIX antecipado adicionada`);
-    }
+        if (formasPermitidas.includes('pix')) {
+            for (let parcelas = 2; parcelas <= 3; parcelas++) {
+                const calculo = calcularValorComTaxas(valorLiquido, 'pix', parcelas);
+                if (calculo) {
+                    const option = document.createElement('option');
+                    option.value = `pix_${parcelas}`;
+                    option.textContent = `${parcelas}x no PIX - ${formatarParaMoeda(calculo.porParcela)}/mês (Total: ${formatarParaMoeda(calculo.total)})`;
+                    optgroupPix.appendChild(option);
+                    pixAdicionado = true;
+                }
+            }
+        }
 
-    if (formasPermitidas.includes('pix_sinal')) {
-        const valorSinal = valorLiquido * 0.30 * 0.92;
-        const valorRestante = valorLiquido * 0.70 * 0.92;
-        const option2 = document.createElement('option');
-        option2.value = 'pix_sinal';
-        option2.textContent = `PIX Sinal - 30% agora (${formatarParaMoeda(valorSinal)}) + 70% no check-out (${formatarParaMoeda(valorRestante)}) (Total: ${formatarParaMoeda(valorLiquido * 0.92)})`;
-        optgroupPix.appendChild(option2);
-        pixAdicionado = true;
-        console.log(`✅ Opção PIX sinal adicionada`);
-    }
+        if (formasPermitidas.includes('pix_antecipado') && permitePagamentoAntecipado()) {
+            const valorComDesconto = valorLiquido * 0.87;
+            const option1 = document.createElement('option');
+            option1.value = 'pix_antecipado';
+            option1.textContent = `PIX Antecipado - ${formatarParaMoeda(valorComDesconto)}`;
+            optgroupPix.appendChild(option1);
+            pixAdicionado = true;
+        }
 
-    if (!pixAdicionado) {
-        optgroupPix.innerHTML = '<option value="" disabled>Não disponível para este projeto</option>';
-    }
+        if (formasPermitidas.includes('pix_sinal')) {
+            const valorSinal = valorLiquido * 0.30 * 0.92;
+            const valorRestante = valorLiquido * 0.70 * 0.92;
+            const option2 = document.createElement('option');
+            option2.value = 'pix_sinal';
+            option2.textContent = `PIX Sinal - 30% agora (${formatarParaMoeda(valorSinal)}) + 70% no check-out (${formatarParaMoeda(valorRestante)}) (Total: ${formatarParaMoeda(valorLiquido * 0.92)})`;
+            optgroupPix.appendChild(option2);
+            pixAdicionado = true;
+        }
 
-    console.log(`🔧 gerarOpcoesDropdown concluída. Opções geradas.`);
-}
+        if (!pixAdicionado) {
+            optgroupPix.innerHTML = '<option value="" disabled>Não disponível para este projeto</option>';
+        }
+    }
 
     function atualizarValorCalculado() {
         const campoValor = document.getElementById('valor');
@@ -518,7 +505,7 @@ function gerarOpcoesDropdown() {
         }
     }
 
-// ===== NOVA FUNÇÃO: PREENCHER CAMPOS VIA API (CORRIGIDA) =====
+    // ===== NOVA FUNÇÃO: PREENCHER CAMPOS VIA API (CORRIGIDA) =====
 async function preencherCamposViaAPI(responseData) {
     if (!responseData || Object.keys(responseData).length === 0) {
         console.log('ℹ️ Nenhum dado para preencher via API.');
@@ -543,19 +530,32 @@ async function preencherCamposViaAPI(responseData) {
 
     console.log('🚀 Preenchendo campos automaticamente com dados da API...', data);
 
-    // PRIMEIRO: Preenche campos que não afetam as opções de pagamento
-    const camposSimples = ['nomeCompleto', 'cpf', 'email', 'celular', 'nomeEvento', 'dataChegada', 'dataSaida'];
-    
-    for (const campo of camposSimples) {
-        if (data.hasOwnProperty(campo) && data[campo] !== null && data[campo] !== undefined) {
-            const elemento = document.getElementById(campo);
-            const valorOriginal = data[campo];
+    // Mapeamento atualizado baseado na sua estrutura atual
+    const mapeamentoCampos = {
+        'nomeEvento': 'nomeEvento',
+        'valor': 'valor',
+        'token': 'token', // Se precisar usar o token em algum campo
+        // Adicione outros campos conforme necessário
+        'nomeCompleto': 'nomeCompleto',
+        'cpf': 'cpf',
+        'email': 'email',
+        'celular': 'celular',
+        'projeto': 'projeto',
+        'formaPagamento': 'formaPagamento',
+        'dataChegada': 'dataChegada',
+        'dataSaida': 'dataSaida'
+    };
+
+    for (const [api_key, form_id] of Object.entries(mapeamentoCampos)) {
+        if (data.hasOwnProperty(api_key) && data[api_key] !== null && data[api_key] !== undefined) {
+            const elemento = document.getElementById(form_id);
+            const valorOriginal = data[api_key];
             const valorDecodificado = String(valorOriginal);
 
             if (elemento) {
-                console.log(`🔄 Preenchendo campo '${campo}' com valor '${valorDecodificado}'`);
+                console.log(`🔄 Preenchendo campo '${form_id}' com valor '${valorDecodificado}'`);
                 
-                switch (campo) {
+                switch (form_id) {
                     case 'cpf':
                         const cpfLimpo = valorDecodificado.replace(/\D/g, '');
                         elemento.value = cpfLimpo;
@@ -570,6 +570,42 @@ async function preencherCamposViaAPI(responseData) {
                         bloquearCampo(elemento, 'Celular definido via API - não pode ser alterado');
                         break;
 
+                      case 'valor':
+                        console.log(`💰 Processando valor: ${valorOriginal} (tipo: ${typeof valorOriginal})`);
+                        
+                        let valorNumerico;
+                        if (typeof valorOriginal === 'number') {
+                            valorNumerico = valorOriginal;
+                        } else if (typeof valorOriginal === 'string') {
+                            if (valorOriginal.includes('R$')) {
+                                elemento.value = valorOriginal;
+                                break;
+                            } else {
+                                valorNumerico = parseFloat(valorOriginal.replace(',', '.')) || 0;
+                            }
+                        }
+                        
+                        if (valorNumerico && valorNumerico > 0) {
+                            const valorFormatado = valorNumerico.toFixed(2)
+                                .replace('.', ',')
+                                .replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                            const valorFinal = 'R$ ' + valorFormatado;
+                            
+                            console.log(`💰 Valor formatado: ${valorFinal}`);
+                            elemento.value = valorFinal;
+                            elemento.dispatchEvent(new Event('input'));
+                            elemento.dispatchEvent(new Event('blur'));
+                            
+                            // Oculta o campo de valor se preenchido pela API
+                            bloquearCampo(elemento, 'Valor definido via API - não pode ser alterado');
+                        }
+                        break;
+
+                    case 'nomeEvento':
+                        elemento.value = valorDecodificado;
+                        bloquearCampo(elemento, 'Nome do evento definido via API - não pode ser alterado');
+                        break;
+
                     case 'dataChegada':
                     case 'dataSaida':
                         const dataFormatada = formatarDataParaInput(valorDecodificado);
@@ -579,110 +615,54 @@ async function preencherCamposViaAPI(responseData) {
                         }
                         break;
 
+                    case 'projeto':
+                        // Aguarda os projetos serem carregados antes de definir
+                        setTimeout(() => {
+                            if (dadosProjetos.projetos && dadosProjetos.projetos[valorDecodificado]) {
+                                elemento.value = valorDecodificado;
+                                bloquearCampo(elemento, 'Projeto definido via API - não pode ser alterado');
+                                elemento.dispatchEvent(new Event('change'));
+                            } else {
+                                console.warn(`⚠️ Projeto inválido '${valorDecodificado}' recebido da API.`);
+                            }
+                        }, 500);
+                        break;
+
+                    case 'formaPagamento':
+                        // Aguarda as opções serem geradas antes de definir
+                        setTimeout(() => {
+                            if (valorDecodificado) {
+                                elemento.value = valorDecodificado;
+                                bloquearCampo(elemento, 'Forma de pagamento definida via API - não pode ser alterada');
+                                elemento.dispatchEvent(new Event('change'));
+                            }
+                        }, 1000);
+                        break;
+
                     default:
                         elemento.value = valorDecodificado;
-                        bloquearCampo(elemento, 'Campo preenchido via API - não pode ser alterado');
+                        if (elemento.labels && elemento.labels.length > 0) {
+                            bloquearCampo(elemento, `${elemento.labels[0].textContent.replace('*', '').trim()} definido via API - não pode ser alterado`);
+                        } else {
+                            bloquearCampo(elemento, 'Campo preenchido via API - não pode ser alterado');
+                        }
                         break;
                 }
                 
                 elemento.classList.add('preenchido-automaticamente');
-                console.log(`✅ Campo '${campo}' preenchido com sucesso`);
+                console.log(`✅ Campo '${form_id}' preenchido com sucesso`);
+            } else {
+                console.warn(`⚠️ Campo '${form_id}' não encontrado no formulário.`);
             }
         }
     }
 
-    // SEGUNDO: Preenche o projeto e aguarda ele ser processado
-    if (data.hasOwnProperty('projeto') && data.projeto !== null && data.projeto !== undefined) {
-        await new Promise((resolve) => {
-            setTimeout(() => {
-                const projetoElement = document.getElementById('projeto');
-                if (projetoElement && dadosProjetos.projetos && dadosProjetos.projetos[data.projeto]) {
-                    console.log(`🔄 Definindo projeto: ${data.projeto}`);
-                    projetoElement.value = data.projeto;
-                    bloquearCampo(projetoElement, 'Projeto definido via API - não pode ser alterado');
-                    projetoElement.dispatchEvent(new Event('change'));
-                    console.log(`✅ Projeto definido: ${data.projeto}`);
-                } else {
-                    console.warn(`⚠️ Projeto inválido '${data.projeto}' recebido da API.`);
-                }
-                resolve();
-            }, 500);
-        });
-    }
-
-    // TERCEIRO: Preenche o valor e força a atualização das opções
-    if (data.hasOwnProperty('valor') && data.valor !== null && data.valor !== undefined) {
-        await new Promise((resolve) => {
-            setTimeout(() => {
-                const valorElement = document.getElementById('valor');
-                const valorOriginal = data.valor;
-                
-                console.log(`💰 Processando valor: ${valorOriginal} (tipo: ${typeof valorOriginal})`);
-                
-                let valorFinal = '';
-                
-                if (typeof valorOriginal === 'number') {
-                    const valorFormatado = valorOriginal.toFixed(2)
-                        .replace('.', ',')
-                        .replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-                    valorFinal = 'R$ ' + valorFormatado;
-                } else if (typeof valorOriginal === 'string') {
-                    if (valorOriginal.includes('R$')) {
-                        valorFinal = valorOriginal;
-                    } else {
-                        const valorNumerico = parseFloat(valorOriginal.replace(',', '.')) || 0;
-                        if (valorNumerico > 0) {
-                            const valorFormatado = valorNumerico.toFixed(2)
-                                .replace('.', ',')
-                                .replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-                            valorFinal = 'R$ ' + valorFormatado;
-                        }
-                    }
-                }
-                
-                if (valorFinal && valorElement) {
-                    console.log(`💰 Definindo valor: ${valorFinal}`);
-                    valorElement.value = valorFinal;
-                    
-                    // FORÇA a execução das funções de atualização
-                    console.log('🔄 Forçando atualização das opções de pagamento...');
-                    gerarOpcoesDropdown();
-                    atualizarValorCalculado();
-                    
-                    // Só bloqueia depois que as opções foram geradas
-                    setTimeout(() => {
-                        bloquearCampo(valorElement, 'Valor definido via API - campo oculto');
-                        console.log(`✅ Valor definido e campo bloqueado: ${valorFinal}`);
-                    }, 100);
-                }
-                resolve();
-            }, 1000);
-        });
-    }
-
-    // QUARTO: Define a forma de pagamento após as opções estarem disponíveis
-    if (data.hasOwnProperty('formaPagamento') && data.formaPagamento !== null && data.formaPagamento !== undefined) {
-        setTimeout(() => {
-            const formaPagamentoElement = document.getElementById('formaPagamento');
-            if (formaPagamentoElement) {
-                console.log(`💳 Tentando definir forma de pagamento: ${data.formaPagamento}`);
-                
-                // Verifica se a opção existe
-                const opcaoExiste = Array.from(formaPagamentoElement.options).some(option => option.value === data.formaPagamento);
-                
-                if (opcaoExiste) {
-                    formaPagamentoElement.value = data.formaPagamento;
-                    bloquearCampo(formaPagamentoElement, 'Forma de pagamento definida via API - não pode ser alterada');
-                    formaPagamentoElement.dispatchEvent(new Event('change'));
-                    atualizarValorCalculado();
-                    console.log(`✅ Forma de pagamento definida: ${data.formaPagamento}`);
-                } else {
-                    console.warn(`⚠️ Forma de pagamento '${data.formaPagamento}' não encontrada nas opções disponíveis.`);
-                    console.log('Opções disponíveis:', Array.from(formaPagamentoElement.options).map(opt => opt.value));
-                }
-            }
-        }, 2000);
-    }
+    // Delay maior para garantir que todos os campos sejam populados
+    setTimeout(() => {
+        console.log('🔄 Atualizando opções de pagamento e cálculos...');
+        gerarOpcoesDropdown();
+        atualizarValorCalculado();
+    }, 1500);
 }
 
     // Função auxiliar para formatar datas (já existente e reutilizada)
