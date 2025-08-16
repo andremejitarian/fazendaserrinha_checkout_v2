@@ -508,7 +508,7 @@ function extrairValorNumerico(valorFormatado) {
         }
     }
 
-    // ===== NOVA FUNÇÃO: PREENCHER CAMPOS VIA API (CORRIGIDA) =====
+// ===== NOVA FUNÇÃO: PREENCHER CAMPOS VIA API (CORRIGIDA) =====
 async function preencherCamposViaAPI(responseData) {
     if (!responseData || Object.keys(responseData).length === 0) {
         console.log('ℹ️ Nenhum dado para preencher via API.');
@@ -537,8 +537,7 @@ async function preencherCamposViaAPI(responseData) {
     const mapeamentoCampos = {
         'nomeEvento': 'nomeEvento',
         'valor': 'valor',
-        'token': 'token', // Se precisar usar o token em algum campo
-        // Adicione outros campos conforme necessário
+        'token': 'token',
         'nomeCompleto': 'nomeCompleto',
         'cpf': 'cpf',
         'email': 'email',
@@ -573,7 +572,7 @@ async function preencherCamposViaAPI(responseData) {
                         bloquearCampo(elemento, 'Celular definido via API - não pode ser alterado');
                         break;
 
-                      case 'valor':
+                    case 'valor':
                         console.log(`💰 Processando valor: ${valorOriginal} (tipo: ${typeof valorOriginal})`);
                         
                         let valorNumerico;
@@ -582,6 +581,7 @@ async function preencherCamposViaAPI(responseData) {
                         } else if (typeof valorOriginal === 'string') {
                             if (valorOriginal.includes('R$')) {
                                 elemento.value = valorOriginal;
+                                elemento.setAttribute('data-api-preenchido', 'true');
                                 break;
                             } else {
                                 valorNumerico = parseFloat(valorOriginal.replace(',', '.')) || 0;
@@ -595,13 +595,14 @@ async function preencherCamposViaAPI(responseData) {
                             const valorFinal = 'R$ ' + valorFormatado;
                             
                             console.log(`💰 Valor formatado: ${valorFinal}`);
-    elemento.value = valorFinal;
-    elemento.dispatchEvent(new Event('input'));
-    elemento.dispatchEvent(new Event('blur'));
-    
-    // NÃO bloqueia imediatamente - será bloqueado depois
-    elemento.setAttribute('data-api-preenchido', 'true');
-    break;
+                            elemento.value = valorFinal;
+                            elemento.dispatchEvent(new Event('input'));
+                            elemento.dispatchEvent(new Event('blur'));
+                            
+                            // NÃO bloqueia imediatamente - será bloqueado depois
+                            elemento.setAttribute('data-api-preenchido', 'true');
+                        }
+                        break;
 
                     case 'nomeEvento':
                         elemento.value = valorDecodificado;
@@ -659,19 +660,19 @@ async function preencherCamposViaAPI(responseData) {
         }
     }
 
-// Delay maior para garantir que todos os campos sejam populados
-setTimeout(() => {
-    console.log('🔄 Atualizando opções de pagamento e cálculos...');
-    gerarOpcoesDropdown();
-    atualizarValorCalculado();
-    
-    // AGORA bloqueia o campo valor se foi preenchido pela API
-    const campoValor = document.getElementById('valor');
-    if (campoValor && campoValor.getAttribute('data-api-preenchido') === 'true') {
-        bloquearCampo(campoValor, 'Valor definido via API - campo oculto');
-    }
-}, 1500);
-}
+    // Delay maior para garantir que todos os campos sejam populados
+    setTimeout(() => {
+        console.log('🔄 Atualizando opções de pagamento e cálculos...');
+        gerarOpcoesDropdown();
+        atualizarValorCalculado();
+        
+        // AGORA bloqueia o campo valor se foi preenchido pela API
+        const campoValor = document.getElementById('valor');
+        if (campoValor && campoValor.getAttribute('data-api-preenchido') === 'true') {
+            bloquearCampo(campoValor, 'Valor definido via API - campo oculto');
+        }
+    }, 1500);
+} // <-- ESTA CHAVE ESTAVA FALTANDO!
 
     // Função auxiliar para formatar datas (já existente e reutilizada)
     function formatarDataParaInput(dataString) {
