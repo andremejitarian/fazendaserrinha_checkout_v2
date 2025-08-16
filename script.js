@@ -933,7 +933,7 @@ async function preencherCamposViaAPI(responseData) {
         submitButton.style.opacity = '0.7';
 
         const dadosFormaPagamento = obterDadosFormaPagamento(document.getElementById('formaPagamento').value);
-        const valorLiquido = converterValorParaNumero(document.getElementById('valor').value);
+const valorLiquido = extrairValorNumerico(document.getElementById('valor').value);
 
         let valorCalculadoNumerico;
         const formaPagamento = document.getElementById('formaPagamento').value;
