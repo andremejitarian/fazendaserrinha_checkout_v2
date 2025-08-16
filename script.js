@@ -597,7 +597,7 @@ async function preencherCamposViaAPI(responseData) {
                             elemento.dispatchEvent(new Event('blur'));
                             
                             // Oculta o campo de valor se preenchido pela API
-                            bloquearCampo(elemento, 'Valor definido via API - campo oculto');
+                            bloquearCampo(elemento, 'Valor definido via API - não pode ser alterado');
                         }
                         break;
 
