@@ -570,20 +570,35 @@ async function preencherCamposViaAPI(responseData) {
                         bloquearCampo(elemento, 'Celular definido via API - não pode ser alterado');
                         break;
 
-                    case 'valor':
-                        if (valorDecodificado.includes('R$')) {
-                            elemento.value = valorDecodificado;
-                        } else {
-                            let valorNumerico = parseFloat(valorDecodificado.replace(',', '.')) || 0;
+                      case 'valor':
+                        console.log(`💰 Processando valor: ${valorOriginal} (tipo: ${typeof valorOriginal})`);
+                        
+                        let valorNumerico;
+                        if (typeof valorOriginal === 'number') {
+                            valorNumerico = valorOriginal;
+                        } else if (typeof valorOriginal === 'string') {
+                            if (valorOriginal.includes('R$')) {
+                                elemento.value = valorOriginal;
+                                break;
+                            } else {
+                                valorNumerico = parseFloat(valorOriginal.replace(',', '.')) || 0;
+                            }
+                        }
+                        
+                        if (valorNumerico && valorNumerico > 0) {
                             const valorFormatado = valorNumerico.toFixed(2)
                                 .replace('.', ',')
                                 .replace(/\B(?=(\d{3})+(?!\d))/g, '.');
                             const valorFinal = 'R$ ' + valorFormatado;
+                            
+                            console.log(`💰 Valor formatado: ${valorFinal}`);
                             elemento.value = valorFinal;
+                            elemento.dispatchEvent(new Event('input'));
+                            elemento.dispatchEvent(new Event('blur'));
+                            
+                            // Oculta o campo de valor se preenchido pela API
+                            bloquearCampo(elemento, 'Valor definido via API - campo oculto', true);
                         }
-                        elemento.dispatchEvent(new Event('input'));
-                        // Oculta o campo de valor se preenchido pela API
-                        bloquearCampo(elemento, 'Valor definido via API - campo oculto', true);
                         break;
 
                     case 'nomeEvento':
