@@ -124,6 +124,29 @@ document.addEventListener('DOMContentLoaded', async () => {
         return nomeProjeto || '';
     }
 
+// ===== FUNÇÃO PARA ATUALIZAR DETALHAMENTO DO PROJETO =====
+function atualizarDetalhamentoProjeto() {
+    const projetoSelecionado = document.getElementById('projeto').value;
+    const detalhamentoContainer = document.getElementById('detalhamentoProjeto');
+    const detalhamentoTexto = document.getElementById('detalhamentoTexto');
+    
+    if (!projetoSelecionado || !dadosProjetos.projetos || !dadosProjetos.projetos[projetoSelecionado]) {
+        detalhamentoContainer.style.display = 'none';
+        return;
+    }
+    
+    const detalhamento = dadosProjetos.projetos[projetoSelecionado].detalhamento;
+    
+    if (detalhamento) {
+        detalhamentoTexto.textContent = detalhamento;
+        detalhamentoContainer.style.display = 'block';
+        console.log(`📋 Detalhamento exibido para projeto '${projetoSelecionado}': ${detalhamento}`);
+    } else {
+        detalhamentoContainer.style.display = 'none';
+        console.warn(`⚠️ Detalhamento não encontrado para o projeto: ${projetoSelecionado}`);
+    }
+}
+
     // ===== FUNÇÕES DE POLÍTICA DE CANCELAMENTO =====
     function determinarPolitica(formaPagamento) {
         if (!dadosPoliticas || !formaPagamento) {
@@ -625,6 +648,7 @@ async function preencherCamposViaAPI(responseData) {
                                 elemento.value = valorDecodificado;
                                 bloquearCampo(elemento, 'Projeto definido via API - não pode ser alterado');
                                 elemento.dispatchEvent(new Event('change'));
+                                atualizarDetalhamentoProjeto();
                             } else {
                                 console.warn(`⚠️ Projeto inválido '${valorDecodificado}' recebido da API.`);
                             }
@@ -829,6 +853,7 @@ async function preencherCamposViaAPI(responseData) {
         document.getElementById('valorCalculado').value = '';
         document.getElementById('valorCalculado').placeholder = 'Selecione uma forma de pagamento';
         exibirPoliticaCancelamento(null);
+        atualizarDetalhamentoProjeto();
         atualizarFormaPagamento();
     });
 
