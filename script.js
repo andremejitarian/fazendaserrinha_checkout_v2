@@ -505,7 +505,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // ===== NOVA FUNÇÃO: PREENCHER CAMPOS VIA API (CORRIGIDA) =====
+// ===== NOVA FUNÇÃO: PREENCHER CAMPOS VIA API (CORRIGIDA) =====
 async function preencherCamposViaAPI(responseData) {
     if (!responseData || Object.keys(responseData).length === 0) {
         console.log('ℹ️ Nenhum dado para preencher via API.');
@@ -534,8 +534,7 @@ async function preencherCamposViaAPI(responseData) {
     const mapeamentoCampos = {
         'nomeEvento': 'nomeEvento',
         'valor': 'valor',
-        'token': 'token', // Se precisar usar o token em algum campo
-        // Adicione outros campos conforme necessário
+        'token': 'token',
         'nomeCompleto': 'nomeCompleto',
         'cpf': 'cpf',
         'email': 'email',
@@ -545,6 +544,9 @@ async function preencherCamposViaAPI(responseData) {
         'dataChegada': 'dataChegada',
         'dataSaida': 'dataSaida'
     };
+
+    // VARIÁVEL PARA ARMAZENAR O VALOR TEMPORARIAMENTE
+    let valorParaProcessar = null;
 
     for (const [api_key, form_id] of Object.entries(mapeamentoCampos)) {
         if (data.hasOwnProperty(api_key) && data[api_key] !== null && data[api_key] !== undefined) {
@@ -570,7 +572,7 @@ async function preencherCamposViaAPI(responseData) {
                         bloquearCampo(elemento, 'Celular definido via API - não pode ser alterado');
                         break;
 
-                      case 'valor':
+                    case 'valor':
                         console.log(`💰 Processando valor: ${valorOriginal} (tipo: ${typeof valorOriginal})`);
                         
                         let valorNumerico;
@@ -579,6 +581,8 @@ async function preencherCamposViaAPI(responseData) {
                         } else if (typeof valorOriginal === 'string') {
                             if (valorOriginal.includes('R$')) {
                                 elemento.value = valorOriginal;
+                                // ARMAZENA PARA PROCESSAR DEPOIS
+                                valorParaProcessar = valorOriginal;
                                 break;
                             } else {
                                 valorNumerico = parseFloat(valorOriginal.replace(',', '.')) || 0;
@@ -593,11 +597,9 @@ async function preencherCamposViaAPI(responseData) {
                             
                             console.log(`💰 Valor formatado: ${valorFinal}`);
                             elemento.value = valorFinal;
-                            elemento.dispatchEvent(new Event('input'));
-                            elemento.dispatchEvent(new Event('blur'));
                             
-                            // Oculta o campo de valor se preenchido pela API
-                            bloquearCampo(elemento, 'Valor definido via API - não pode ser alterado');
+                            // ARMAZENA PARA PROCESSAR DEPOIS
+                            valorParaProcessar = valorFinal;
                         }
                         break;
 
@@ -636,7 +638,7 @@ async function preencherCamposViaAPI(responseData) {
                                 bloquearCampo(elemento, 'Forma de pagamento definida via API - não pode ser alterada');
                                 elemento.dispatchEvent(new Event('change'));
                             }
-                        }, 1000);
+                        }, 2000); // Aumentei o tempo para 2 segundos
                         break;
 
                     default:
@@ -657,12 +659,46 @@ async function preencherCamposViaAPI(responseData) {
         }
     }
 
-    // Delay maior para garantir que todos os campos sejam populados
+    // PROCESSA O VALOR E GERA AS OPÇÕES APÓS TODOS OS CAMPOS SEREM PREENCHIDOS
     setTimeout(() => {
-        console.log('🔄 Atualizando opções de pagamento e cálculos...');
+        console.log('🔄 Gerando opções de pagamento...');
+        
+        // Primeiro gera as opções
         gerarOpcoesDropdown();
+        
+        // Depois bloqueia o campo valor se foi preenchido pela API
+        if (valorParaProcessar) {
+            const campoValor = document.getElementById('valor');
+            if (campoValor && !campoValor.classList.contains('campo-bloqueado')) {
+                // Dispara os eventos necessários
+                campoValor.dispatchEvent(new Event('input'));
+                campoValor.dispatchEvent(new Event('blur'));
+                
+                // Agora bloqueia o campo
+                bloquearCampo(campoValor, 'Valor definido via API - campo oculto');
+            }
+        }
+        
+        // Atualiza os cálculos
         atualizarValorCalculado();
-    }, 1500);
+    }, 1000);
+
+    // Segundo timeout para garantir que a forma de pagamento seja definida após as opções estarem disponíveis
+    setTimeout(() => {
+        console.log('🔄 Verificando forma de pagamento...');
+        const formaPagamentoElement = document.getElementById('formaPagamento');
+        if (data.formaPagamento && formaPagamentoElement && !formaPagamentoElement.classList.contains('campo-bloqueado')) {
+            const opcaoExiste = Array.from(formaPagamentoElement.options).some(option => option.value === data.formaPagamento);
+            if (opcaoExiste) {
+                formaPagamentoElement.value = data.formaPagamento;
+                bloquearCampo(formaPagamentoElement, 'Forma de pagamento definida via API - não pode ser alterada');
+                formaPagamentoElement.dispatchEvent(new Event('change'));
+                atualizarValorCalculado();
+            } else {
+                console.warn(`⚠️ Forma de pagamento '${data.formaPagamento}' não encontrada nas opções disponíveis.`);
+            }
+        }
+    }, 2500);
 }
 
     // Função auxiliar para formatar datas (já existente e reutilizada)
