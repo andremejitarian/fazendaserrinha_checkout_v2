@@ -225,11 +225,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
 
-    function extrairValorNumerico(valorFormatado) {
-        if (!valorFormatado) return 0;
-        let valor = valorFormatado.replace(/R$\s?/g, '').replace(/\./g, '').replace(',', '.');
-        return parseFloat(valor) || 0;
-    }
+function extrairValorNumerico(valorFormatado) {
+    if (!valorFormatado) return 0;
+    // Corrigido: remove tudo que não é número, vírgula ou ponto
+    let valor = valorFormatado.replace(/[^\d,\.]/g, '');
+    valor = valor.replace(/\./g, ''); // Remove pontos (separadores de milhares)
+    valor = valor.replace(',', '.'); // Troca vírgula por ponto
+    return parseFloat(valor) || 0;
+}
 
     function getPaymentTypeName(tipo) {
         if (tipo === 'cartao') return 'Cartão';
@@ -592,14 +595,13 @@ async function preencherCamposViaAPI(responseData) {
                             const valorFinal = 'R$ ' + valorFormatado;
                             
                             console.log(`💰 Valor formatado: ${valorFinal}`);
-                            elemento.value = valorFinal;
-                            elemento.dispatchEvent(new Event('input'));
-                            elemento.dispatchEvent(new Event('blur'));
-                            
-                            // Oculta o campo de valor se preenchido pela API
-                            bloquearCampo(elemento, 'Valor definido via API - não pode ser alterado');
-                        }
-                        break;
+    elemento.value = valorFinal;
+    elemento.dispatchEvent(new Event('input'));
+    elemento.dispatchEvent(new Event('blur'));
+    
+    // NÃO bloqueia imediatamente - será bloqueado depois
+    elemento.setAttribute('data-api-preenchido', 'true');
+    break;
 
                     case 'nomeEvento':
                         elemento.value = valorDecodificado;
@@ -657,12 +659,18 @@ async function preencherCamposViaAPI(responseData) {
         }
     }
 
-    // Delay maior para garantir que todos os campos sejam populados
-    setTimeout(() => {
-        console.log('🔄 Atualizando opções de pagamento e cálculos...');
-        gerarOpcoesDropdown();
-        atualizarValorCalculado();
-    }, 1500);
+// Delay maior para garantir que todos os campos sejam populados
+setTimeout(() => {
+    console.log('🔄 Atualizando opções de pagamento e cálculos...');
+    gerarOpcoesDropdown();
+    atualizarValorCalculado();
+    
+    // AGORA bloqueia o campo valor se foi preenchido pela API
+    const campoValor = document.getElementById('valor');
+    if (campoValor && campoValor.getAttribute('data-api-preenchido') === 'true') {
+        bloquearCampo(campoValor, 'Valor definido via API - campo oculto');
+    }
+}, 1500);
 }
 
     // Função auxiliar para formatar datas (já existente e reutilizada)
