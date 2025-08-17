@@ -637,7 +637,7 @@ async function preencherCamposViaAPI(responseData) {
                         const dataFormatada = formatarDataParaInput(valorDecodificado);
                         if (dataFormatada) {
                             elemento.value = dataFormatada;
-                            bloquearCampo(elemento, `${elemento.labels[0]?.textContent?.replace('*', '').trim() || 'Data'} definido via API - não pode ser alterado`);
+                        bloquearCampo(elemento, `${elemento.labels[0]?.textContent?.replace('*', '').trim() || 'Data'} definido via API - não pode ser alterado`);
                         }
                         break;
 
@@ -699,31 +699,58 @@ async function preencherCamposViaAPI(responseData) {
 } // <-- ESTA CHAVE ESTAVA FALTANDO!
 
     // Função auxiliar para formatar datas (já existente e reutilizada)
-    function formatarDataParaInput(dataString) {
-        try {
-            let data;
-            if (dataString.match(/^\d{2}[\/\-]\d{2}[\/\-]\d{4}$/)) {
-                const partes = dataString.split(/[\/\-]/);
-                data = new Date(partes[2], partes[1] - 1, partes[0]);
-            } else if (dataString.match(/^\d{4}-\d{2}-\d{2}$/)) {
-                return dataString;
-            } else if (dataString.match(/^\d{2}[\/\-]\d{2}[\/\-]\d{2}$/)) {
-                const partes = dataString.split(/[\/\-]/);
-                const ano = parseInt(partes[2]) + (parseInt(partes[2]) > 50 ? 1900 : 2000);
-                data = new Date(ano, partes[1] - 1, partes[0]);
-            } else {
-                data = new Date(dataString);
-            }
-            if (isNaN(data.getTime())) {
-                console.warn(`⚠️ Data inválida: ${dataString}`);
-                return null;
-            }
-            return data.toISOString().split('T')[0];
-        } catch (error) {
-            console.warn(`⚠️ Erro ao formatar data '${dataString}':`, error);
+function formatarDataParaInput(dataString) {
+    try {
+        let data;
+        
+        // Se já está no formato datetime-local (YYYY-MM-DDTHH:mm)
+        if (dataString.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)) {
+            return dataString;
+        }
+        
+        // Se está no formato de data ISO com horário (YYYY-MM-DDTHH:mm:ss)
+        if (dataString.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)) {
+            return dataString.substring(0, 16); // Remove os segundos
+        }
+        
+        // Se está no formato brasileiro com horário (DD/MM/YYYY HH:mm)
+        if (dataString.match(/^\d{2}[\/\-]\d{2}[\/\-]\d{4}\s\d{2}:\d{2}$/)) {
+            const [datePart, timePart] = dataString.split(' ');
+            const partes = datePart.split(/[\/\-]/);
+            return `${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}T${timePart}`;
+        }
+        
+        // Se está no formato brasileiro apenas data (DD/MM/YYYY)
+        if (dataString.match(/^\d{2}[\/\-]\d{2}[\/\-]\d{4}$/)) {
+            const partes = dataString.split(/[\/\-]/);
+            return `${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}T12:00`; // Horário padrão meio-dia
+        }
+        
+        // Se está no formato ISO apenas data (YYYY-MM-DD)
+        if (dataString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+            return `${dataString}T12:00`; // Horário padrão meio-dia
+        }
+        
+        // Tenta converter outros formatos
+        data = new Date(dataString);
+        if (isNaN(data.getTime())) {
+            console.warn(`⚠️ Data inválida: ${dataString}`);
             return null;
         }
+        
+        // Converte para formato datetime-local
+        const year = data.getFullYear();
+        const month = String(data.getMonth() + 1).padStart(2, '0');
+        const day = String(data.getDate()).padStart(2, '0');
+        const hours = String(data.getHours()).padStart(2, '0');
+        const minutes = String(data.getMinutes()).padStart(2, '0');
+        
+        return `${year}-${month}-${day}T${hours}:${minutes}`;
+    } catch (error) {
+        console.warn(`⚠️ Erro ao formatar data '${dataString}':`, error);
+        return null;
     }
+}
 
     // ===== NOVA FUNÇÃO: INICIALIZAR FORMULÁRIO (Orquestra o carregamento e preenchimento) =====
     async function inicializarFormulario() {
@@ -857,11 +884,17 @@ async function preencherCamposViaAPI(responseData) {
         atualizarFormaPagamento();
     });
 
-    document.getElementById('dataChegada').addEventListener('change', function(e) {
-        console.log(`📅 Data de chegada alterada para: ${e.target.value}`);
-        gerarOpcoesDropdown();
-        atualizarValorCalculado();
-    });
+document.getElementById('dataChegada').addEventListener('change', function(e) {
+    console.log(`📅 Data e hora de chegada alterada para: ${e.target.value}`);
+    gerarOpcoesDropdown();
+    atualizarValorCalculado();
+});
+
+// Adicione também para dataSaida se necessário
+document.getElementById('dataSaida').addEventListener('change', function(e) {
+    console.log(`�� Data e hora de saída alterada para: ${e.target.value}`);
+    // Pode adicionar validações adicionais aqui se necessário
+});
 
     // ===== VALIDAÇÃO DE CPF LOCAL =====
     function validarCPF(cpf) {
@@ -986,6 +1019,8 @@ const valorLiquido = extrairValorNumerico(document.getElementById('valor').value
             valorCalculadoNumerico: valorCalculadoNumerico,
             dataChegada: document.getElementById('dataChegada').value,
             dataSaida: document.getElementById('dataSaida').value,
+    dataChegadaFormatada: formatarDataParaExibicao(document.getElementById('dataChegada').value),
+    dataSaidaFormatada: formatarDataParaExibicao(document.getElementById('dataSaida').value),
             aceitoRegulamento: document.getElementById('aceitoRegulamento').checked,
             comunicacoesFazenda: document.querySelector('input[name="comunicacoesFazenda"]:checked') ?
                 document.querySelector('input[name="comunicacoesFazenda"]:checked').value : 'não informado'
@@ -1063,12 +1098,26 @@ const valorLiquido = extrairValorNumerico(document.getElementById('valor').value
             return;
         }
 
-        const hoje = new Date();
-        const chegada = new Date(formData.dataChegada);
-        const saida = new Date(formData.dataSaida);
-        const dataLimite = new Date();
-        dataLimite.setDate(hoje.getDate() - 60);
-        dataLimite.setHours(0, 0, 0, 0);
+// ===== VALIDAÇÕES DE DATA E HORA =====
+const hoje = new Date();
+const chegada = new Date(formData.dataChegada);
+const saida = new Date(formData.dataSaida);
+const dataLimite = new Date();
+dataLimite.setDate(hoje.getDate() - 60);
+
+// Validação de data de chegada
+if (chegada < dataLimite) {
+    restaurarBotao();
+    mostrarMensagem('A data de chegada não pode ser anterior a 60 dias da data atual.', 'erro');
+    return;
+}
+
+// Validação de data de saída
+if (saida <= chegada) {
+    restaurarBotao();
+    mostrarMensagem('A data e hora de saída deve ser posterior à data e hora de chegada.', 'erro');
+    return;
+}
 
         const chegadaNormalizada = new Date(chegada);
         chegadaNormalizada.setHours(0, 0, 0, 0);
@@ -1122,6 +1171,26 @@ const valorLiquido = extrairValorNumerico(document.getElementById('valor').value
             mostrarMensagem(`❌ Erro ao processar check-in: ${resultado.error}. Tente novamente.`, 'erro');
         }
     });
+
+// ===== FUNÇÃO AUXILIAR PARA FORMATAÇÃO DE EXIBIÇÃO =====
+function formatarDataParaExibicao(datetimeLocal) {
+    if (!datetimeLocal) return '';
+    
+    try {
+        const data = new Date(datetimeLocal);
+        const dia = String(data.getDate()).padStart(2, '0');
+        const mes = String(data.getMonth() + 1).padStart(2, '0');
+        const ano = data.getFullYear();
+        const horas = String(data.getHours()).padStart(2, '0');
+        const minutos = String(data.getMinutes()).padStart(2, '0');
+        
+        return `${dia}/${mes}/${ano} às ${horas}:${minutos}`;
+    } catch (error) {
+        console.warn('Erro ao formatar data para exibição:', error);
+        return datetimeLocal;
+    }
+}
+
 
     // ===== INICIALIZAÇÃO DA APLICAÇÃO =====
     // Carrega as políticas e projetos no início
