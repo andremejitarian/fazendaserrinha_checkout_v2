@@ -481,8 +481,6 @@ function extrairValorNumerico(valorFormatado) {
             return null;
         }
 
-        mostrarMensagem('⏳ Carregando dados de reserva...', 'info');
-
         try {
             const response = await fetch(`${WEBHOOK_DATA_FETCH_URL}?reserva=${reserva}`);
             if (!response.ok) {
@@ -490,18 +488,11 @@ function extrairValorNumerico(valorFormatado) {
                 throw new Error(`Erro ao buscar dados: ${response.status} - ${errorText}`);
             }
             const data = await response.json();
-            mostrarMensagem('✅ Dados de reserva carregados com sucesso!', 'sucesso');
             return data;
         } catch (error) {
             console.error('❌ Erro no fetch de dados do n8n:', error);
             mostrarMensagem(`❌ Erro ao carregar dados de reserva: ${error.message}.`, 'erro');
             return null;
-        } finally {
-            // Remove a mensagem de carregamento após um breve atraso
-            setTimeout(() => {
-                const msg = document.querySelector('.mensagem-feedback.info');
-                if (msg) msg.remove();
-            }, 2000);
         }
     }
 
