@@ -650,10 +650,14 @@ async function preencherCamposViaAPI(responseData) {
                         }
                         break;
 
-                    case 'descricao':
-                        elemento.value = valorDecodificado;
-                        bloquearCampo(elemento, 'Nome do evento definido via API - não pode ser alterado');
-                        break;
+case 'descricao':
+    elemento.value = valorDecodificado;
+    bloquearCampo(elemento, 'Nome do evento definido via API - não pode ser alterado', true); // true para ocultar
+    // Atualiza a exibição da descrição
+    setTimeout(() => {
+        atualizarExibicaoDescricao();
+    }, 100);
+    break;
 
                     case 'dataChegada':
                     case 'dataSaida':
