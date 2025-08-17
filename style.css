@@ -290,6 +290,31 @@ input[readonly] {
     line-height: 1.4;
 }
 
+/* Estilo para exibição da descrição */
+#descricaoExibicao {
+    margin-top: 10px;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border-left: 4px solid #007bff;
+    border-radius: 4px;
+}
+
+#descricaoExibicao .campo-info {
+    font-size: 14px;
+    color: #495057;
+    font-weight: 500;
+    margin: 0;
+}
+
+/* Animação suave para aparecer/desaparecer */
+#descricaoExibicao {
+    transition: opacity 0.3s ease-in-out;
+}
+
+#descricaoExibicao.show {
+    opacity: 1;
+}
+
 /* ===== ESTILOS PARA POLÍTICA DE CANCELAMENTO ===== */
 
 /* Container principal da política - seguindo o padrão dos form-groups */
