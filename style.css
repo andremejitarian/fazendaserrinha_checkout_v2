@@ -224,11 +224,10 @@ input[type="datetime-local"]:focus {
 }
 
 input[type="datetime-local"].campo-bloqueado {
-    background-color: #f5f5f5 !important;
-    color: #666 !important;
+    background-color: #e8f5e8 !important; /* Verde claro em vez de cinza */
+    color: #333 !important;
     cursor: not-allowed !important;
 }
-
 
 /* ===== NOVOS ESTILOS PARA FORMA DE PAGAMENTO ===== */
 
@@ -290,12 +289,14 @@ input[readonly] {
     line-height: 1.4;
 }
 
-/* Estilo para exibição da descrição */
+/* ===== PADRONIZAÇÃO DE FUNDO VERDE E BORDA ESQUERDA ===== */
+
+/* Estilo para exibição da descrição - padronizado */
 #descricaoTextoContainer {
     margin-top: 10px;
     padding: 12px;
-    background-color: #f8f9fa;
-    border-left: 4px solid #28a745;
+    background-color: #e8f5e8; /* Verde claro padronizado */
+    border-left: 4px solid #28a745; /* Verde padrão */
     border-radius: 4px;
 }
 
@@ -304,6 +305,37 @@ input[readonly] {
     color: #495057;
     font-weight: 500;
     margin: 0;
+}
+
+/* Padronização para campos datetime-local e select */
+input[type="datetime-local"],
+select {
+    background-color: #e8f5e8 !important; /* Fundo verde claro padronizado */
+    border-left: 4px solid #28a745 !important; /* Borda esquerda verde padronizada */
+    border-radius: 4px !important; /* Bordas arredondadas para consistência */
+    border-top: 1px solid #ddd !important;
+    border-right: 1px solid #ddd !important;
+    border-bottom: 1px solid #ddd !important;
+}
+
+/* Ajusta o estilo de foco para manter consistência */
+input[type="datetime-local"]:focus,
+select:focus {
+    border-color: #007bff !important;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
+    border-left: 4px solid #007bff !important; /* Borda esquerda segue a cor de foco */
+}
+
+/* Garante que campos preenchidos automaticamente também sigam essa padronização */
+.preenchido-automaticamente {
+    background-color: #e8f5e8 !important; /* Fundo verde claro padronizado */
+    border-left: 4px solid #28a745 !important; /* Borda esquerda verde padronizada */
+    border-radius: 4px !important;
+}
+
+.preenchido-automaticamente:focus {
+    background-color: #ffffff !important;
+    border-left: 4px solid #2196F3 !important;
 }
 
 /* ===== ESTILOS PARA POLÍTICA DE CANCELAMENTO ===== */
@@ -381,17 +413,6 @@ input[readonly] {
 }
 
 /* ===== ESTILOS PARA PREENCHIMENTO VIA URL ===== */
-
-/* Destaque para campos preenchidos automaticamente */
-.preenchido-automaticamente {
-    background-color: #e8f5e8 !important;
-    border-left: 4px solid #4CAF50 !important;
-    transition: all 0.3s ease;
-}
-.preenchido-automaticamente:focus {
-    background-color: #ffffff !important;
-    border-left: 4px solid #2196F3 !important;
-}
 
 /* Texto Legal (LGPD, Regulamento) */
 .legal-text {
