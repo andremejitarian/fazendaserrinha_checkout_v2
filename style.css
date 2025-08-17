@@ -298,6 +298,10 @@ input[readonly] {
     background-color: #e8f5e8; /* Verde claro padronizado */
     border-left: 4px solid #28a745; /* Verde padrão */
     border-radius: 4px;
+    /* 🆕 ADICIONE ESTAS LINHAS PARA QUEBRAR PALAVRAS LONGAS */
+    overflow-wrap: break-word; /* Propriedade moderna */
+    word-wrap: break-word;     /* Compatibilidade com navegadores antigos */
+    word-break: break-word;    /* Força quebra em palavras muito longas */
 }
 
 #descricaoTextoContainer .campo-info {
