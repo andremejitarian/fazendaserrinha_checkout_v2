@@ -298,6 +298,10 @@ input[readonly] {
     background-color: #e8f5e8; /* Verde claro padronizado */
     border-left: 4px solid #28a745; /* Verde padrão */
     border-radius: 4px;
+    /* 🆕 CORREÇÃO PARA QUEBRAR PALAVRAS LONGAS */
+    overflow-wrap: break-word; /* Propriedade moderna */
+    word-wrap: break-word;     /* Compatibilidade com navegadores antigos */
+    word-break: break-word;    /* Força quebra em palavras muito longas */
 }
 
 #descricaoTextoContainer .campo-info {
@@ -487,6 +491,40 @@ select:focus {
     transform: translateY(-2px);
 }
 
+/* ===== PROTEÇÃO GERAL CONTRA OVERFLOW ===== */
+
+/* Previne overflow horizontal em todos os containers */
+.container,
+.main-screen-card,
+.form-group,
+.politica-cancelamento {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    max-width: 100%;
+}
+
+/* Garante que inputs não excedam o container */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+input[type="datetime-local"],
+select,
+textarea {
+    max-width: 100%;
+    min-width: 0; /* Permite que o campo encolha se necessário */
+}
+
+/* Proteção específica para textos longos */
+.campo-info,
+.politica-texto,
+.legal-text {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto; /* Adiciona hifenização automática */
+}
+
 /* ===== RESPONSIVIDADE ===== */
 
 @media (max-width: 768px) {
@@ -531,6 +569,8 @@ select:focus {
         padding-top: 70px; /* Ajuste de padding para o logo em telas menores */
         padding-left: 20px;
         padding-right: 20px;
+        max-width: calc(100vw - 40px); /* 🆕 Garante que não exceda a tela */
+        overflow-x: hidden; /* 🆕 Previne scroll horizontal */
     }
     
     h2 {
@@ -597,6 +637,12 @@ select:focus {
     .politica-icone {
         font-size: 1.1rem;
     }
+
+    /* 🆕 PROTEÇÃO EXTRA PARA MOBILE */
+    * {
+        overflow-wrap: break-word !important;
+        word-wrap: break-word !important;
+    }
 }
 @media (max-width: 480px) {
     .header-background {
@@ -633,6 +679,7 @@ select:focus {
         padding-right: 15px;
         border-radius: 0;
         box-shadow: none;
+        max-width: calc(100vw - 30px); /* 🆕 Ajustado para telas muito pequenas */
     }
     
     .back-link {
