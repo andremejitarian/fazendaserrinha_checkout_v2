@@ -641,7 +641,7 @@ case 'descricao':
     const descricaoContainer = document.getElementById('descricaoTextoContainer');
     const descricaoTexto = document.getElementById('descricaoTextoExibicao');
     if (descricaoContainer && descricaoTexto) {
-        descricaoTexto.textContent = `📝 Evento: ${valorDecodificado}`;
+        descricaoTexto.textContent = `Detalhamento: ${valorDecodificado}`;
         descricaoContainer.style.display = 'block';
     }
     
