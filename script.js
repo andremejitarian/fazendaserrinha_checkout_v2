@@ -147,29 +147,6 @@ function atualizarDetalhamentoProjeto() {
     }
 }
 
-// ===== FUNÇÃO PARA ATUALIZAR EXIBIÇÃO DA DESCRIÇÃO =====
-function atualizarExibicaoDescricao() {
-    const campoDescricao = document.getElementById('descricao');
-    const descricaoContainer = document.getElementById('descricaoExibicao');
-    const descricaoTexto = document.getElementById('descricaoTexto');
-    
-    if (!campoDescricao || !descricaoContainer || !descricaoTexto) {
-        console.warn('⚠️ Elementos da descrição não encontrados');
-        return;
-    }
-    
-    const valorDescricao = campoDescricao.value.trim();
-    
-    if (valorDescricao) {
-        descricaoTexto.textContent = `📝 Evento: ${valorDescricao}`;
-        descricaoContainer.style.display = 'block';
-        console.log(`📋 Descrição exibida: ${valorDescricao}`);
-    } else {
-        descricaoContainer.style.display = 'none';
-        console.log('📋 Descrição ocultada - campo vazio');
-    }
-}
-
     // ===== FUNÇÕES DE POLÍTICA DE CANCELAMENTO =====
     function determinarPolitica(formaPagamento) {
         if (!dadosPoliticas || !formaPagamento) {
@@ -528,32 +505,31 @@ function extrairValorNumerico(valorFormatado) {
         }
     }
 
-// ===== FUNÇÃO PARA BLOQUEAR CAMPOS (ATUALIZADA) =====
-function bloquearCampo(elemento, motivo = 'Campo preenchido automaticamente', ocultar = false) {
-    if (elemento) {
-        elemento.readOnly = true;
-        elemento.disabled = true;
-        
-        if (ocultar) {
-            // Oculta o campo mas mantém o container pai visível para outros elementos
-            elemento.style.display = 'none';
-            // Também oculta o label se existir
-            const label = elemento.previousElementSibling;
-            if (label && label.tagName === 'LABEL') {
-                label.style.display = 'none';
+    // ===== FUNÇÃO PARA BLOQUEAR CAMPOS =====
+    function bloquearCampo(elemento, motivo = 'Campo preenchido automaticamente', ocultar = false) {
+        if (elemento) {
+            elemento.readOnly = true;
+            elemento.disabled = true;
+            
+            if (ocultar) {
+                const container = elemento.closest('.form-group') || elemento.parentElement;
+                if (container) {
+                    container.style.display = 'none';
+                } else {
+                    elemento.style.display = 'none';
+                }
+            } else {
+                elemento.style.backgroundColor = '#f5f5f5';
+                elemento.style.color = '#666';
+                elemento.style.cursor = 'not-allowed';
             }
-        } else {
-            elemento.style.backgroundColor = '#f5f5f5';
-            elemento.style.color = '#666';
-            elemento.style.cursor = 'not-allowed';
+            
+            elemento.title = motivo;
+            elemento.classList.add('campo-bloqueado');
+            
+            console.log(`🔒 Campo '${elemento.id}' foi ${ocultar ? 'ocultado' : 'bloqueado'}: ${motivo}`);
         }
-        
-        elemento.title = motivo;
-        elemento.classList.add('campo-bloqueado');
-        
-        console.log(`🔒 Campo '${elemento.id}' foi ${ocultar ? 'ocultado' : 'bloqueado'}: ${motivo}`);
     }
-}
 
 // ===== NOVA FUNÇÃO: PREENCHER CAMPOS VIA API (CORRIGIDA) =====
 async function preencherCamposViaAPI(responseData) {
@@ -652,12 +628,8 @@ async function preencherCamposViaAPI(responseData) {
                         break;
 
                     case 'descricao':
-                            elemento.value = valorDecodificado;
-                            bloquearCampo(elemento, 'Nome do evento definido via API - não pode ser alterado', true); // true para ocultar
-                            // Atualiza a exibição da descrição
-                            setTimeout(() => {
-                                atualizarExibicaoDescricao();
-                            }, 100);
+                        elemento.value = valorDecodificado;
+                        bloquearCampo(elemento, 'Nome do evento definido via API - não pode ser alterado');
                         break;
 
                     case 'dataChegada':
@@ -899,21 +871,6 @@ function formatarDataParaInput(dataString) {
         }
         e.target.value = value;
     });
-
-// Event listener para atualizar a exibição quando a descrição for alterada manualmente
-document.getElementById('descricao').addEventListener('input', function(e) {
-    if (!e.target.classList.contains('campo-bloqueado')) {
-        setTimeout(() => {
-            atualizarExibicaoDescricao();
-        }, 100);
-    }
-});
-
-document.getElementById('descricao').addEventListener('blur', function(e) {
-    if (!e.target.classList.contains('campo-bloqueado')) {
-        atualizarExibicaoDescricao();
-    }
-});
 
     document.getElementById('valor').addEventListener('input', function(e) {
         if (e.target.classList.contains('campo-bloqueado')) return;
