@@ -627,10 +627,26 @@ async function preencherCamposViaAPI(responseData) {
                         }
                         break;
 
-                    case 'descricao':
-                        elemento.value = valorDecodificado;
-                        bloquearCampo(elemento, 'Nome do evento definido via API - não pode ser alterado');
-                        break;
+case 'descricao':
+    elemento.value = valorDecodificado;
+    // Oculta o campo input
+    elemento.style.display = 'none';
+    // Oculta o label também
+    const label = elemento.previousElementSibling;
+    if (label && label.tagName === 'LABEL') {
+        label.style.display = 'none';
+    }
+    
+    // Exibe o texto da descrição
+    const descricaoContainer = document.getElementById('descricaoTextoContainer');
+    const descricaoTexto = document.getElementById('descricaoTextoExibicao');
+    if (descricaoContainer && descricaoTexto) {
+        descricaoTexto.textContent = `📝 Evento: ${valorDecodificado}`;
+        descricaoContainer.style.display = 'block';
+    }
+    
+    console.log(`✅ Descrição carregada via API: ${valorDecodificado}`);
+    break;
 
                     case 'dataChegada':
                     case 'dataSaida':
