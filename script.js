@@ -705,6 +705,25 @@ case 'descricao':
     }, 1500);
 } // <-- ESTA CHAVE ESTAVA FALTANDO!
 
+    
+// ===== NOVA FUNÇÃO: OBTER reserva DA URL E ARMAZENAR =====
+function obterreservaURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const numeroReserva = urlParams.get('reserva');
+    
+    // Armazena o número da reserva no campo oculto
+    if (numeroReserva) {
+        const campoReserva = document.getElementById('numeroReserva');
+        if (campoReserva) {
+            campoReserva.value = numeroReserva;
+            console.log('📋 Número da reserva armazenado:', numeroReserva);
+        }
+    }
+    
+    return numeroReserva;
+}
+
+
     // Função auxiliar para formatar datas (já existente e reutilizada)
 function formatarDataParaInput(dataString) {
     try {
@@ -1064,6 +1083,7 @@ const valorLiquido = extrairValorNumerico(document.getElementById('valor').value
     dataChegadaFormatada: formatarDataParaExibicao(document.getElementById('dataChegada').value),
     dataSaidaFormatada: formatarDataParaExibicao(document.getElementById('dataSaida').value),
             aceitoRegulamento: document.getElementById('aceitoRegulamento').checked,
+numeroReserva: document.getElementById('numeroReserva').value || null,
             comunicacoesFazenda: document.querySelector('input[name="comunicacoesFazenda"]:checked') ?
                 document.querySelector('input[name="comunicacoesFazenda"]:checked').value : 'não informado'
         };
