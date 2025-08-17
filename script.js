@@ -701,37 +701,70 @@ async function preencherCamposViaAPI(responseData) {
     // Função auxiliar para formatar datas (já existente e reutilizada)
 function formatarDataParaInput(dataString) {
     try {
+        console.log(`🔄 Formatando data de entrada: "${dataString}"`);
+        
         let data;
         
         // Se já está no formato datetime-local (YYYY-MM-DDTHH:mm)
         if (dataString.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)) {
+            console.log(`✅ Data já no formato correto: ${dataString}`);
             return dataString;
         }
         
         // Se está no formato de data ISO com horário (YYYY-MM-DDTHH:mm:ss)
         if (dataString.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)) {
-            return dataString.substring(0, 16); // Remove os segundos
+            const resultado = dataString.substring(0, 16); // Remove os segundos
+            console.log(`✅ Data ISO convertida: ${resultado}`);
+            return resultado;
         }
         
-        // Se está no formato brasileiro com horário (DD/MM/YYYY HH:mm)
+        // CORRIGIDO: Se está no formato brasileiro com horário (DD/MM/YYYY HH:mm)
         if (dataString.match(/^\d{2}[\/\-]\d{2}[\/\-]\d{4}\s\d{2}:\d{2}$/)) {
             const [datePart, timePart] = dataString.split(' ');
             const partes = datePart.split(/[\/\-]/);
-            return `${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}T${timePart}`;
+            // CORREÇÃO: partes[0] = dia, partes[1] = mês, partes[2] = ano
+            const resultado = `${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}T${timePart}`;
+            console.log(`✅ Data brasileira com horário convertida: ${dataString} → ${resultado}`);
+            return resultado;
         }
         
-        // Se está no formato brasileiro apenas data (DD/MM/YYYY)
+        // CORRIGIDO: Se está no formato brasileiro apenas data (DD/MM/YYYY)
         if (dataString.match(/^\d{2}[\/\-]\d{2}[\/\-]\d{4}$/)) {
             const partes = dataString.split(/[\/\-]/);
-            return `${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}T12:00`; // Horário padrão meio-dia
+            // CORREÇÃO: partes[0] = dia, partes[1] = mês, partes[2] = ano
+            const resultado = `${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}T12:00`;
+            console.log(`✅ Data brasileira sem horário convertida: ${dataString} → ${resultado}`);
+            return resultado;
         }
         
         // Se está no formato ISO apenas data (YYYY-MM-DD)
         if (dataString.match(/^\d{4}-\d{2}-\d{2}$/)) {
-            return `${dataString}T12:00`; // Horário padrão meio-dia
+            const resultado = `${dataString}T12:00`;
+            console.log(`✅ Data ISO sem horário convertida: ${resultado}`);
+            return resultado;
         }
         
-        // Tenta converter outros formatos
+        // NOVO: Tratamento para formato brasileiro com ano de 2 dígitos (DD/MM/YY HH:mm)
+        if (dataString.match(/^\d{2}[\/\-]\d{2}[\/\-]\d{2}\s\d{2}:\d{2}$/)) {
+            const [datePart, timePart] = dataString.split(' ');
+            const partes = datePart.split(/[\/\-]/);
+            const ano = parseInt(partes[2]) + (parseInt(partes[2]) > 50 ? 1900 : 2000);
+            const resultado = `${ano}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}T${timePart}`;
+            console.log(`✅ Data brasileira YY com horário convertida: ${dataString} → ${resultado}`);
+            return resultado;
+        }
+        
+        // NOVO: Tratamento para formato brasileiro com ano de 2 dígitos (DD/MM/YY)
+        if (dataString.match(/^\d{2}[\/\-]\d{2}[\/\-]\d{2}$/)) {
+            const partes = dataString.split(/[\/\-]/);
+            const ano = parseInt(partes[2]) + (parseInt(partes[2]) > 50 ? 1900 : 2000);
+            const resultado = `${ano}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}T12:00`;
+            console.log(`✅ Data brasileira YY sem horário convertida: ${dataString} → ${resultado}`);
+            return resultado;
+        }
+        
+        // Tenta converter outros formatos usando Date (com cuidado)
+        console.log(`⚠️ Tentando conversão genérica para: ${dataString}`);
         data = new Date(dataString);
         if (isNaN(data.getTime())) {
             console.warn(`⚠️ Data inválida: ${dataString}`);
@@ -745,7 +778,9 @@ function formatarDataParaInput(dataString) {
         const hours = String(data.getHours()).padStart(2, '0');
         const minutes = String(data.getMinutes()).padStart(2, '0');
         
-        return `${year}-${month}-${day}T${hours}:${minutes}`;
+        const resultado = `${year}-${month}-${day}T${hours}:${minutes}`;
+        console.log(`✅ Data genérica convertida: ${dataString} → ${resultado}`);
+        return resultado;
     } catch (error) {
         console.warn(`⚠️ Erro ao formatar data '${dataString}':`, error);
         return null;
