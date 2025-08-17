@@ -468,23 +468,23 @@ function extrairValorNumerico(valorFormatado) {
         return null;
     }
 
-    // ===== NOVA FUNÇÃO: OBTER TOKEN DA URL =====
-    function obterTokenURL() {
+    // ===== NOVA FUNÇÃO: OBTER reserva DA URL =====
+    function obterreservaURL() {
         const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get('token');
+        return urlParams.get('reserva');
     }
 
     // ===== NOVA FUNÇÃO: BUSCAR DADOS VIA API =====
-    async function fetchDadosN8N(token) {
-        if (!token) {
-            console.log('ℹ️ Nenhum token na URL para buscar dados.');
+    async function fetchDadosN8N(reserva) {
+        if (!reserva) {
+            console.log('ℹ️ Nenhum reserva na URL para buscar dados.');
             return null;
         }
 
         mostrarMensagem('⏳ Carregando dados de reserva...', 'info');
 
         try {
-            const response = await fetch(`${WEBHOOK_DATA_FETCH_URL}?token=${token}`);
+            const response = await fetch(`${WEBHOOK_DATA_FETCH_URL}?reserva=${reserva}`);
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(`Erro ao buscar dados: ${response.status} - ${errorText}`);
@@ -560,7 +560,7 @@ async function preencherCamposViaAPI(responseData) {
     const mapeamentoCampos = {
         'descricao': 'descricao',
         'valor': 'valor',
-        'token': 'token',
+        'reserva': 'reserva',
         'nomeCompleto': 'nomeCompleto',
         'cpf': 'cpf',
         'email': 'email',
@@ -789,14 +789,14 @@ function formatarDataParaInput(dataString) {
 
     // ===== NOVA FUNÇÃO: INICIALIZAR FORMULÁRIO (Orquestra o carregamento e preenchimento) =====
     async function inicializarFormulario() {
-        const token = obterTokenURL();
-        if (token) {
-            const dadosAPI = await fetchDadosN8N(token);
+        const reserva = obterreservaURL();
+        if (reserva) {
+            const dadosAPI = await fetchDadosN8N(reserva);
             if (dadosAPI) {
                 await preencherCamposViaAPI(dadosAPI);
             }
         } else {
-            console.log('ℹ️ Nenhuma token de reserva encontrado na URL. Formulário será preenchido manualmente.');
+            console.log('ℹ️ Nenhuma reserva de reserva encontrado na URL. Formulário será preenchido manualmente.');
         }
 
         // Essas chamadas são essenciais, independentemente do pré-preenchimento via API,
