@@ -147,29 +147,6 @@ function atualizarDetalhamentoProjeto() {
     }
 }
 
-// ===== FUNÇÃO PARA ATUALIZAR EXIBIÇÃO DA DESCRIÇÃO =====
-function atualizarExibicaoDescricao() {
-    const campoDescricao = document.getElementById('descricao');
-    const descricaoContainer = document.getElementById('descricaoExibicao');
-    const descricaoTexto = document.getElementById('descricaoTexto');
-    
-    if (!campoDescricao || !descricaoContainer || !descricaoTexto) {
-        console.warn('⚠️ Elementos da descrição não encontrados');
-        return;
-    }
-    
-    const valorDescricao = campoDescricao.value.trim();
-    
-    if (valorDescricao) {
-        descricaoTexto.textContent = `📝 Evento: ${valorDescricao}`;
-        descricaoContainer.style.display = 'block';
-        console.log(`📋 Descrição exibida: ${valorDescricao}`);
-    } else {
-        descricaoContainer.style.display = 'none';
-        console.log('📋 Descrição ocultada - campo vazio');
-    }
-}
-
     // ===== FUNÇÕES DE POLÍTICA DE CANCELAMENTO =====
     function determinarPolitica(formaPagamento) {
         if (!dadosPoliticas || !formaPagamento) {
@@ -650,14 +627,10 @@ async function preencherCamposViaAPI(responseData) {
                         }
                         break;
 
-case 'descricao':
-    elemento.value = valorDecodificado;
-    bloquearCampo(elemento, 'Nome do evento definido via API - não pode ser alterado', true); // true para ocultar
-    // Atualiza a exibição da descrição
-    setTimeout(() => {
-        atualizarExibicaoDescricao();
-    }, 100);
-    break;
+                    case 'descricao':
+                        elemento.value = valorDecodificado;
+                        bloquearCampo(elemento, 'Nome do evento definido via API - não pode ser alterado');
+                        break;
 
                     case 'dataChegada':
                     case 'dataSaida':
