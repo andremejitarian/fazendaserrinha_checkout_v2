@@ -19,8 +19,6 @@
       "nome": "Festival Arte Serrinha",
       "formas_pagamento_permitidas": ["cartao", "pix", "pix_antecipado", "pix_sinal"],
       "detalhamento": "Inclui 8 pernoites, 3 refeições por dia e uso livre de todas as áreas de lazer da fazenda, com chegada no dia 13 pela manhã (primeira refeição almoço) e saída no dia 21 pela manhã (última refeição café)."
-
-"
     },
     "acampamento_jovens": {
       "nome": "Acampamento de Jovens",
