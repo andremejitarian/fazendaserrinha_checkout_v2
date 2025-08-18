@@ -1,9 +1,9 @@
 {
   "projetos": {
-    "fazenda_serrinha": {
-      "nome": "Fazenda_Serrinha",
+    "acampamento_01_2026": {
+      "nome": "Acampamento de férias em Janeiro de 2026",
       "formas_pagamento_permitidas": ["cartao", "pix", "pix_antecipado", "pix_sinal"],
-      "detalhamento": "Projeto principal da fazenda com todas as opções de pagamento"
+      "detalhamento": "Atividades e hospedagem completa de 10 a 16 de janeiro de 2025"
     },
     "festival": {
       "nome": "Festival Arte Serrinha – Primavera 2025",
@@ -26,7 +26,7 @@
       "detalhamento": "Inclui 2 pernoites, 4 refeições por dia, todas as atividades e uso livre de todas as áreas de lazer da fazenda, com chegada no dia 31 à tarde (primeira refeição jantar) e saída no dia 2 à tarde (última refeição almoço)"
     },
     "ano_novo_25": {
-      "nome": "Ano Novo 2025 ",
+      "nome": "Ano Novo 2025",
       "formas_pagamento_permitidas": ["cartao", "pix", "pix_antecipado", "pix_sinal"],
       "detalhamento": "Inclui 6 pernoites, 4 refeições por dia, todas as atividades e uso livre de todas as áreas de lazer da fazenda, com chegada no dia 28 à tarde (primeira refeição jantar) e saída no dia 3 à tarde (última refeição almoço)."
     }
