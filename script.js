@@ -632,7 +632,7 @@ case 'descricao':
     const descricaoContainer = document.getElementById('descricaoTextoContainer');
     const descricaoTexto = document.getElementById('descricaoTextoExibicao');
     if (descricaoContainer && descricaoTexto) {
-        descricaoTexto.textContent = `Detalhamento: ${valorDecodificado}`;
+        descricaoTexto.textContent = `<strong>Detalhamento:</strong> ${valorDecodificado}`;
         descricaoContainer.style.display = 'block';
     }
     
