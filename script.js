@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         },
         pix: {
             1: { nome: 'PIX - À vista', taxaFixa: 0.00, taxaPercentual: 0.08 },
-            3: { nome: 'PIX - em 3 vezes', taxaFixa: 0.00, taxaPercentual: 0.08 },
             A: { nome: 'PIX - Opção A', taxaFixa: 0.00, taxaPercentual: 0.08 }
         }
     };
