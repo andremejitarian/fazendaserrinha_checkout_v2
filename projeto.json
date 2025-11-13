@@ -2,7 +2,7 @@
   "projetos": {
     "acampamento_01_2026": {
       "nome": "Acampamento de férias em Janeiro de 2026",
-      "formas_pagamento_permitidas": ["cartao", "pix", "pix_antecipado", "pix_sinal"],
+      "formas_pagamento_permitidas": ["cartao", "pix", "pix_sinal"],
       "detalhamento": "Atividades e hospedagem completa de 10 a 16 de janeiro de 2025"
     },
     "festival": {
