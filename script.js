@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             return dadosProjetos.projetos[projeto].formas_pagamento_permitidas;
         }
         console.warn(`Formas de pagamento não encontradas para o projeto: ${projeto}. Usando valor padrão: todas.`);
-        return ["cartao", "pix", "pix_antecipado", "pix_sinal"];
+        return ["cartao", "pix","pix_1","pix_antecipado", "pix_sinal"];
     }
 
     // ===== CARREGAMENTO DE DADOS =====
