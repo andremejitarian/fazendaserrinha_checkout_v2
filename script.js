@@ -270,7 +270,7 @@ function extrairValorNumerico(valorFormatado) {
         const chegada = new Date(dataChegada);
         const diferenca = chegada.getTime() - hoje.getTime();
         const diasDiferenca = Math.ceil(diferenca / (1000 * 3600 * 24));
-        return diasDiferenca >= 30;
+        return diasDiferenca >= 90;
     }
 
     function permitePagamentoPIXVista() {
@@ -280,7 +280,7 @@ function extrairValorNumerico(valorFormatado) {
         const chegada = new Date(dataChegada);
         const diferenca = chegada.getTime() - hoje.getTime();
         const diasDiferenca = Math.ceil(diferenca / (1000 * 3600 * 24));
-        return diasDiferenca < 30;
+        return diasDiferenca < 90;
     }
 
     // ===== LÓGICA DE PAGAMENTO =====
