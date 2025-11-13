@@ -27,7 +27,7 @@
     },
     "pousada_12_12_25": {
       "nome": "Pousada – 12 a 14 de dezembro",
-      "formas_pagamento_permitidas": ["cartao", "pix_1", "pix_sinal"],
+      "formas_pagamento_permitidas": ["cartao","pix","pix_1", "pix_sinal"],
       "detalhamento": "Inclui 2 pernoites, 4 refeições por dia, e uso livre de todas as áreas de lazer da fazenda, com chegada no dia 12 à tarde (primeira refeição jantar) e saída no dia 14 à tarde (última refeição almoço)"
     },
     "ano_novo_25": {
