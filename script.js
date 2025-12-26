@@ -481,17 +481,49 @@ function extrairValorNumerico(valorFormatado) {
             return null;
         }
 
+        // Adiciona timestamp para evitar cache e encodeURI para segurança
+        const url = `${WEBHOOK_DATA_FETCH_URL}?reserva=${encodeURIComponent(reserva)}&ts=${Date.now()}`;
+        console.log(`🚀 Iniciando busca de dados (n8n): ${url}`);
+
         try {
-            const response = await fetch(`${WEBHOOK_DATA_FETCH_URL}?reserva=${reserva}`);
+            // Timeout de 15 segundos para não ficar carregando infinitamente
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache'
+                },
+                signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+
             if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Erro ao buscar dados: ${response.status} - ${errorText}`);
+                const errorText = await response.text().catch(() => 'Sem detalhes');
+                throw new Error(`Status ${response.status}: ${errorText}`);
             }
+            
             const data = await response.json();
+            console.log('✅ Dados recebidos do n8n:', data);
             return data;
         } catch (error) {
-            console.error('❌ Erro no fetch de dados do n8n:', error);
-            mostrarMensagem(`❌ Erro ao carregar dados de reserva: ${error.message}.`, 'erro');
+            console.error('❌ Erro detach de dados do n8n:', error);
+            
+            let mensagemErro = `Erro ao carregar dados de reserva.`;
+            
+            if (error.name === 'AbortError') {
+                mensagemErro = 'Tempo limite excedido. O servidor demorou muito para responder.';
+            } else if (error.message.includes('Failed to fetch')) {
+                mensagemErro = 'Erro de conexão/Rede. O servidor recusou a conexão ou você está offline.';
+            } else {
+                mensagemErro += ` Detalhes: ${error.message}`;
+            }
+            
+            mostrarMensagem(`❌ ${mensagemErro}`, 'erro');
             return null;
         }
     }
