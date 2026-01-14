@@ -10,6 +10,11 @@
       "formas_pagamento_permitidas": ["cartao"],
       "detalhamento": "Retiro de Orientação Artística entre os dias 26 a 30 de janeiro de 2026"
     },
+      "retiro_karate_30_01_26": {
+      "nome": "Retiro de Karate entre os dias 30 de janeiro a 01 de fevereiro de 2026.",
+      "formas_pagamento_permitidas": ["cartao"],
+      "detalhamento": "Retiro de Karate entre os dias 30 de janeiro a 01 de fevereiro de 2026."
+    },
     "festival": {
       "nome": "Festival Arte Serrinha – Primavera 2025",
       "formas_pagamento_permitidas": ["cartao", "pix", "pix_antecipado", "pix_sinal"],
