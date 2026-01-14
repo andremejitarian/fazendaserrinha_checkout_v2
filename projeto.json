@@ -5,6 +5,11 @@
       "formas_pagamento_permitidas": ["cartao", "pix", "pix_sinal"],
       "detalhamento": "Atividades e hospedagem completa de 10 a 16 de janeiro de 2025"
     },
+    "retiro_arte_26_01_26": {
+      "nome": "Retiro de Orientação Artística entre os dias 26 a 30 de janeiro de 2026",
+      "formas_pagamento_permitidas": ["cartao"],
+      "detalhamento": "Retiro de Orientação Artística entre os dias 26 a 30 de janeiro de 2026"
+    },
     "festival": {
       "nome": "Festival Arte Serrinha – Primavera 2025",
       "formas_pagamento_permitidas": ["cartao", "pix", "pix_antecipado", "pix_sinal"],
