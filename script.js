@@ -322,8 +322,13 @@ function extrairValorNumerico(valorFormatado) {
         const formasPermitidas = obterFormasPagamentoPermitidas(projetoSelecionado);
         console.log(`🏗️ Formas de pagamento permitidas para ${projetoSelecionado}:`, formasPermitidas);
 
-        if (formasPermitidas.includes('cartao')) {
-            for (let parcelas = 1; parcelas <= 12; parcelas++) {
+        let cartaoDisponivel = false;
+        const permiteTodosCartao = formasPermitidas.includes('cartao');
+
+        for (let parcelas = 1; parcelas <= 12; parcelas++) {
+            const permiteParcelaEspecifica = formasPermitidas.includes(`cartao_${parcelas}`);
+
+            if (permiteTodosCartao || permiteParcelaEspecifica) {
                 const calculo = calcularValorComTaxas(valorLiquido, 'cartao', parcelas);
                 if (calculo) {
                     const option = document.createElement('option');
@@ -335,9 +340,12 @@ function extrairValorNumerico(valorFormatado) {
                         option.textContent = `${parcelas}x no ${tipoPagamento} - ${formatarParaMoeda(calculo.porParcela)}/mês (Total: ${formatarParaMoeda(calculo.total)})`;
                     }
                     optgroupCartao.appendChild(option);
+                    cartaoDisponivel = true;
                 }
             }
-        } else {
+        }
+
+        if (!cartaoDisponivel) {
             optgroupCartao.innerHTML = '<option value="" disabled>Não disponível para este projeto</option>';
         }
 
