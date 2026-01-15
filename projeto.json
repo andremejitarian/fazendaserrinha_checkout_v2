@@ -12,7 +12,7 @@
     },
       "retiro_karate_30_01_26": {
       "nome": "Retiro de Karate entre os dias 30 de janeiro a 01 de fevereiro de 2026.",
-      "formas_pagamento_permitidas": ["cartao"],
+      "formas_pagamento_permitidas": ["cartao_1"],
       "detalhamento": "Retiro de Karate entre os dias 30 de janeiro a 01 de fevereiro de 2026."
     },
     "festival": {
